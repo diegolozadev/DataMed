@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container card shadow p-4">
+        <h1>Crear Nueva Consulta para {{ patient.nombres }} {{ patient.apellidos }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Guardar Consulta</button>
+        </form>
+        <br>
+        <a href="{% url 'patient_visits' patient.id %}" style="text-decoration: none;">Volver a las visitas del paciente</a>
+    </div>
+{% endblock %}
