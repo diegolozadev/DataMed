@@ -2,6 +2,13 @@ body {
     background-color: #f4f6f9;
 }
 
+.navbar-main {
+    background-color: #0d2a4d;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px 20px;
+}
+
+
 .navbar .nav-link {
     font-size: 0.95rem;
 }
