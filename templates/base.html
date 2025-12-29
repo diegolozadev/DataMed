@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Dashboard{% endblock %}</title>
+    <title>{% block title %} {% endblock %}</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,93 +20,26 @@
 </head>
 <body>
 
-    <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm navbar-main" >
-    <div class="container-fluid">
+    <!-- navbar -->
+    {% include 'includes/navbar.html' %}
 
-        <!-- Brand -->
-        <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
-            <i class="fa-solid fa-heart-pulse me-2 text-danger"></i>
-            DataMed
-        </a>
+    <!-- CONTENIDO -->
+    <main class="container py-4">
+        {% block content %}
 
-        <!-- Toggle mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        {% endblock %}
+    </main>
 
-        <!-- Links -->
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard' %}">
-                        <i class="fa-solid fa-chart-line me-1"></i>
-                        Dashboard
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa-solid fa-user-injured me-1"></i>
-                        Pacientes
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa-solid fa-calendar-check me-1"></i>
-                        Citas
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa-solid fa-phone me-1"></i>
-                        Llamadas
-                    </a>
-                </li>
-
-            </ul>
-
-            <!-- Right side -->
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-
-                <li class="nav-item text-white small d-none d-lg-block">
-                    <i class="fa-solid fa-user me-1"></i>
-                    {{ request.user.username|default:"Usuario" }}
-                </li>
-
-                <li class="nav-item">
-                    <a class="btn btn-outline-light btn-sm" href="#">
-                        <i class="fa-solid fa-right-from-bracket me-1"></i>
-                        Salir
-                    </a>
-                </li>
-
-            </ul>
-        </div>
+    <!-- Footer -->
+    <div class="container text-center py-4">
+        <small class="text-muted">
+            &copy; 2025 DataMed hecho con <i class="fa-solid fa-heart text-danger"></i> por el equipo DataINO.
+        </small>
 
     </div>
-</nav>
-
-<!-- CONTENIDO -->
-<main class="container py-4">
-    {% block content %}
-
-    {% endblock %}
-</main>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Footer -->
-<div class="container text-center py-4">
-    <small class="text-muted">
-        &copy; 2025 DataMed hecho con <i class="fa-solid fa-heart text-danger"></i> por el equipo DataINO.
-    </small>
-
-</div>
 
 </body>
 </html>
