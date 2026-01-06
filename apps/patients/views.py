@@ -4,3 +4,7 @@ from django.shortcuts import render
 
 def patients_list(request):
     return render(request, 'patients/patients_list.html')
+
+
+def create_patient(request):
+    return render(request, 'patients/create_patient.html')
