@@ -39,11 +39,11 @@
                     <tbody>
                         {% for patient in patients %}
                         <tr>
-                            <td class="fw-semibold">{{ patient.name }}</td>
-                            <td>{{ patient.age }}</td>
+                            <td class="fw-semibold">{{ patient.nombre }}</td>
+                            <td>{{ patient.fecha_nacimiento }}</td>
                             <td>
                                 <span class="badge bg-info text-dark">
-                                    {{ patient.gender }}
+                                    {{ patient.genero }}
                                 </span>
                             </td>
                             <td class="text-end">
