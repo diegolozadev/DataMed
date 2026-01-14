@@ -53,14 +53,8 @@
                             <td>{{ patient.fecha_ingreso }}</td>
                             <td>{{ patient.programa }}</td>
                             <td class="text-end">
-                                <a href="#" class="btn btn-sm btn-outline-primary me-1">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-outline-warning me-1">
+                                <a href="{% url "patient_detail" patient.id %}" class="btn btn-sm btn-outline-warning me-1">
                                     <i class="fa-solid fa-pen"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-outline-danger">
-                                    <i class="fa-solid fa-trash"></i>
                                 </a>
                             </td>
                         </tr>
@@ -80,7 +74,5 @@
         </div>
     </div>
 </div>
-
-
 {% endblock content %}
     

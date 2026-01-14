@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}Lista de Pacientes{% endblock title %}
+
+{% block style_extra %}<link rel="stylesheet" href="{% static 'css/patients.css' %}">{% endblock style_extra %}
+
+
+{% block content %}
+    <div class="container mt-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">
+                Modulo vista y edición del paciente: {{ patient.nombre }} {{ patient.apellido }}
+            </h2>
+        </div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="form-grid">
+                {% for field in form %}
+                    <div class="form-row-3">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="error">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-success">
+                    Actualizar Paciente
+                </button>
+                <a href="{% url 'patients_list' %}" class="btn btn-danger ms-2">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+    
