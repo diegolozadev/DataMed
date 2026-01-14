@@ -30,8 +30,11 @@
                     <thead class="table-light">
                         <tr>
                             <th>Nombre</th>
-                            <th>Edad</th>
+                            <th>Apellido</th>
+                            <th>Fecha de Nacimiento</th>
                             <th>Género</th>
+                            <th>Fecha de Ingreso</th>
+                            <th>Programa</th>
                             <th class="text-end">Acciones</th>
                         </tr>
                     </thead>
@@ -40,12 +43,15 @@
                         {% for patient in patients %}
                         <tr>
                             <td class="fw-semibold">{{ patient.nombre }}</td>
+                            <td>{{ patient.apellido }}</td>
                             <td>{{ patient.fecha_nacimiento }}</td>
                             <td>
                                 <span class="badge bg-info text-dark">
                                     {{ patient.genero }}
                                 </span>
                             </td>
+                            <td>{{ patient.fecha_ingreso }}</td>
+                            <td>{{ patient.programa }}</td>
                             <td class="text-end">
                                 <a href="#" class="btn btn-sm btn-outline-primary me-1">
                                     <i class="fa-solid fa-eye"></i>

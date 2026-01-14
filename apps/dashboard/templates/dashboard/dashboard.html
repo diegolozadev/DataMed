@@ -86,10 +86,10 @@
                     {% if last_enter %}
                         <p class="fw-semibold mb-1">
                             <i class="fa-solid fa-user-check text-success me-1"></i>
-                            {{ last_enter.name }}
+                            {{ last_enter.nombre }} {{ last_enter.apellido }}
                         </p>
                         <small class="text-muted">
-                            {{ last_enter.entered_at }}
+                            {{ last_enter.fecha_ingreso }}
                         </small>
                     {% else %}
                         <p class="text-muted">No hay registros</p>

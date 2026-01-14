@@ -98,7 +98,7 @@ class Patient(models.Model):
     diagnostico_clinico = models.TextField(max_length=1000, choices=[("G47.3", "Apnea del Sueño"), ("I10", "Hipertensión Esencial (Primaria)"), ("E66.9", "Obesidad No Especificada")])
     programa = models.CharField(max_length=100, choices=[("PROGRAMA AOS", "Programa aos"), ("PROGRAMA INSOMNIO", "Programa Insomnio")])
     estado = models.CharField(max_length=20, choices=[("ACTIVO", "Activo"), ("INACTIVO", "Inactivo"), ("SUSPENDIDO", "Suspendido")], default="ACTIVO")
-    fecha_ingreso = models.DateField(auto_now_add=True)
+    fecha_ingreso = models.DateField()
     fecha_egreso = models.DateField(null=True, blank=True)
     motivo_egreso = models.TextField(max_length=500, null=True, blank=True)
     mes_capita = models.IntegerField()
