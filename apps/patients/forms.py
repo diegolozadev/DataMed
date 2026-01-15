@@ -1,7 +1,19 @@
 from django import forms
 from .models import Patient
 
+from django import forms
+from .models import Patient
+
+
 class PatientForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['fecha_ingreso'].input_formats = ['%Y-%m-%d']
+        self.fields['fecha_nacimiento'].input_formats = ['%Y-%m-%d']
+        self.fields['fecha_egreso'].input_formats = ['%Y-%m-%d']
+    
     class Meta:
         model = Patient
         fields = '__all__'
@@ -10,7 +22,7 @@ class PatientForm(forms.ModelForm):
             'apellido': forms.TextInput(attrs={'class': 'form-control'}),
             'tipo_documento': forms.Select(attrs={'class': 'form-control'}),
             'documento': forms.TextInput(attrs={'class': 'form-control'}),
-            'fecha_nacimiento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'fecha_nacimiento': forms.DateInput(format='%Y-%m-%d', attrs={'type':'date', 'class': 'form-control'}),
             'genero': forms.Select(attrs={'class': 'form-control'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
             'barrio': forms.TextInput(attrs={'class': 'form-control'}),
@@ -30,13 +42,12 @@ class PatientForm(forms.ModelForm):
             'cuello': forms.NumberInput(attrs={'class': 'form-control'}),
             'medico_remitente': forms.Select(attrs={'class': 'form-control'}),
             'especialidad': forms.Select(attrs={'class': 'form-control'}),
-            'diagnostico_clinico': forms.Select(attrs={'class': 'form-control', 'rows': 3}),
+            'diagnostico_clinico': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'programa': forms.Select(attrs={'class': 'form-control'}),
             'estado': forms.Select(attrs={'class': 'form-control'}),
-            'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'fecha_egreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'fecha_ingreso': forms.DateInput(format='%Y-%m-%d', attrs={'type':'date', 'class': 'form-control'}),
+            'fecha_egreso': forms.DateInput(format='%Y-%m-%d', attrs={'type':'date', 'class': 'form-control'}),
             'motivo_egreso': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'mes_capita': forms.NumberInput(attrs={'class': 'form-control'}),
             'valor_capita': forms.NumberInput(attrs={'class': 'form-control'}),
         }
-        
