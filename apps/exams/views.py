@@ -3,10 +3,12 @@ from apps.exams.forms import MonitoreoForm, PsicologiaForm, NutricionForm
 from .models import Monitoreo, Psicologia, Nutricion
 from apps.patients.models import Patient
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 # Vista para ver la historia clinica de cada paciente
+@login_required
 def patient_clinical(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
     
@@ -25,6 +27,7 @@ def patient_clinical(request, patient_id):
     
     
 # Vista para registrar un nuevo monitoreo
+@login_required
 def register_monitoreo(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
 
@@ -47,6 +50,7 @@ def register_monitoreo(request, patient_id):
     
     
 # Vista para registrar datos de psicologia
+@login_required
 def register_psicologia(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
     
@@ -69,6 +73,7 @@ def register_psicologia(request, patient_id):
     
     
 # Vista para registrar datos de nutricion
+@login_required
 def register_nutricion(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
     

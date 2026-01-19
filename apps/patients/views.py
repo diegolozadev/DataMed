@@ -3,10 +3,12 @@ from .models import Patient
 from .forms import PatientForm
 from django.db.models import Q
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 # Esta vista muestra la lista de pacientes
+@login_required
 def patients_list(request):
     
     patients = Patient.objects.all()
@@ -25,6 +27,7 @@ def patients_list(request):
     
 
 # Esta vista es para crear pacientes
+@login_required
 def create_patient(request):
     
     if request.method == 'POST':
@@ -42,6 +45,7 @@ def create_patient(request):
 
 
 # Esta vista muestra los detalles de un paciente específico
+@login_required
 def patient_detail(request, patient_id):
     
     patient = Patient.objects.get(id=patient_id)
