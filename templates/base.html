@@ -26,7 +26,7 @@
     <!-- CONTENIDO -->
     <main class="container py-4">
         {% block content %}
-
+            <!-- Contenido específico de cada página -->
         {% endblock %}
     </main>
 
@@ -40,6 +40,10 @@
         </small>
 
     </div>
+
+    {% block script_extra %}
+        <!-- Scripts adicionales -->
+    {% endblock script_extra %}
 
 </body>
 </html>

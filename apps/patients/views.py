@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Patient
 from .forms import PatientForm
 from django.db.models import Q
+from django.contrib import messages
 
 # Create your views here.
 
@@ -29,6 +30,7 @@ def create_patient(request):
         form = PatientForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Paciente creado exitosamente ✅')
             return redirect('patients_list')
     else:
         form = PatientForm()
@@ -45,6 +47,7 @@ def patient_detail(request, patient_id):
         form = PatientForm(request.POST, instance=patient)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Paciente actualizado exitosamente ✅')
             return redirect('patients_list')
     else:
         form = PatientForm(instance=patient)
