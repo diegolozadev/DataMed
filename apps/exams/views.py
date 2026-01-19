@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from apps.exams.forms import MonitoreoForm, PsicologiaForm, NutricionForm
 from .models import Monitoreo, Psicologia, Nutricion
 from apps.patients.models import Patient
+from django.contrib import messages
 
 # Create your views here.
 
@@ -34,6 +35,7 @@ def register_monitoreo(request, patient_id):
             monitoreo.patient = patient
             monitoreo.registrado_por = request.user
             monitoreo.save()
+            messages.success(request, f'Monitoreo registrado para {patient.nombre} {patient.apellido} exitosamente ✅')
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = MonitoreoForm()
@@ -55,6 +57,7 @@ def register_psicologia(request, patient_id):
             psicologia.patient = patient
             psicologia.registrado_por = request.user
             psicologia.save()
+            messages.success(request, f'Sesión de psicología registrada para {patient.nombre} {patient.apellido} exitosamente ✅')
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = PsicologiaForm()
@@ -76,6 +79,7 @@ def register_nutricion(request, patient_id):
             nutricion.patient = patient
             nutricion.registrado_por = request.user
             nutricion.save()
+            messages.success(request, f'Sesión de nutrición registrada para {patient.nombre} {patient.apellido} exitosamente ✅')
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = NutricionForm()

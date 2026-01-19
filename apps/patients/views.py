@@ -26,16 +26,19 @@ def patients_list(request):
 
 # Esta vista es para crear pacientes
 def create_patient(request):
+    
     if request.method == 'POST':
         form = PatientForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Paciente creado exitosamente ✅')
+            messages.success(request, f'Paciente {form.instance.nombre} {form.instance.apellido} creado exitosamente ✅')
             return redirect('patients_list')
     else:
         form = PatientForm()
 
-    return render(request, 'patients/create_patient.html', {'form': form})
+    return render(request, 'patients/create_patient.html', {
+        'form': form
+        })
 
 
 # Esta vista muestra los detalles de un paciente específico
@@ -47,7 +50,7 @@ def patient_detail(request, patient_id):
         form = PatientForm(request.POST, instance=patient)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Paciente actualizado exitosamente ✅')
+            messages.success(request, f'Paciente {form.instance.nombre} {form.instance.apellido} actualizado exitosamente ✅')
             return redirect('patients_list')
     else:
         form = PatientForm(instance=patient)
