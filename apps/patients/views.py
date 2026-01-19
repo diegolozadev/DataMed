@@ -21,6 +21,7 @@ def patients_list(request):
         'patients': patients,
         'query': query
     })
+    
 
 # Esta vista es para crear pacientes
 def create_patient(request):

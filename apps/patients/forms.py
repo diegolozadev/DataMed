@@ -1,10 +1,6 @@
 from django import forms
 from .models import Patient
 
-from django import forms
-from .models import Patient
-
-
 class PatientForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
@@ -42,7 +38,7 @@ class PatientForm(forms.ModelForm):
             'cuello': forms.NumberInput(attrs={'class': 'form-control'}),
             'medico_remitente': forms.Select(attrs={'class': 'form-control'}),
             'especialidad': forms.Select(attrs={'class': 'form-control'}),
-            'diagnostico_clinico': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'diagnostico_clinico': forms.TextInput(attrs={'class': 'form-control'}),
             'programa': forms.Select(attrs={'class': 'form-control'}),
             'estado': forms.Select(attrs={'class': 'form-control'}),
             'fecha_ingreso': forms.DateInput(format='%Y-%m-%d', attrs={'type':'date', 'class': 'form-control'}),

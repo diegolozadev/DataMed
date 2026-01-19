@@ -4,6 +4,7 @@ from apps.patients.models import Patient
 
 # Create your models here.
 
+# Modelo para guardar los datos de monitoreo de un paciente
 class Monitoreo(models.Model):
     
     MODOS_VENTILATORIOS = [
@@ -57,3 +58,84 @@ class Monitoreo(models.Model):
     
     def __str__(self):
         return f"{self.patient} - {self.modo_ventilatorio} - {self.created_at.date()}"
+    
+    
+
+# Modelo para guardar los datos de psicologia de un paciente
+class Psicologia(models.Model):
+    
+    # Relación con el modelo Patient
+    patient = models.ForeignKey(
+        Patient,
+        on_delete=models.CASCADE,
+        related_name='psicologias'
+    )
+    
+    # Relación con el modelo User
+    registrado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='psicologias_registradas'
+    )
+    
+    inventario_depre_beck = models.IntegerField()
+    inventario_ansiedad_beck = models.IntegerField()
+    escala_atenas = models.IntegerField()
+    
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.patient} - {self.escala_atenas} - {self.created_at.date()}"
+
+
+
+# Modelo para guardar los datos de nutrición de un paciente
+class Nutricion(models.Model):
+    
+    ESTADOS_NUTRICIONALES = [
+        ("DESNUTRICIÓN", "Desnutrición"),
+        ("EUTRÓFICO", "Eutrófico"),
+        ("SOBREPESO", "Sobrepeso"),
+        ("OBESIDAD I", "Obesidad I"),
+        ("OBESIDAD II", "Obesidad II"),
+        ("OBESIDAD III", "Obesidad III"),
+    ]
+    
+    RUMIACIONES = [
+        ("SI", "Sí"),
+        ("NO", "No"),
+    ]
+    
+    # Relación con el modelo Patient
+    patient = models.ForeignKey(
+        Patient,
+        on_delete=models.CASCADE,
+        related_name='nutriciones'
+    )
+    
+    # Relación con el modelo User
+    registrado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='nutriciones_registradas'
+    )
+    
+    estado_nutricional = models.CharField(choices=ESTADOS_NUTRICIONALES, max_length=20)
+    carbohidratos_pct = models.DecimalField(max_digits=5, decimal_places=2)
+    rumiacion = models.CharField(choices=RUMIACIONES, max_length=5)
+    cafeina = models.DecimalField(max_digits=5, decimal_places=2)
+    
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Nutrición'
+        verbose_name_plural = 'Nutriciones'
+    
+    def __str__(self):
+        return f"{self.patient} - {self.estado_nutricional} - {self.created_at.date()}"

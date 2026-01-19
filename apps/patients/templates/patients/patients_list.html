@@ -56,6 +56,7 @@
                             <th>Género</th>
                             <th>Fecha de Ingreso</th>
                             <th>Programa</th>
+                            <th>Estado</th>
                             <th class="text-end">Acciones</th>
                         </tr>
                     </thead>
@@ -68,12 +69,32 @@
                             <td>{{ patient.documento }}</td>
                             <td>{{ patient.fecha_nacimiento }}</td>
                             <td>
-                                <span class="badge bg-info text-dark">
-                                    {{ patient.genero }}
-                                </span>
+                                {% if patient.genero.lower == 'm' %}
+                                    <span class="badge bg-primary">
+                                        {{ patient.genero }}
+                                    </span>
+                                {% elif patient.genero.lower == 'f' %}
+                                    <span class="badge bg-warning text-dark">
+                                        {{ patient.genero }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        {{ patient.genero }}
+                                    </span>
+                                {% endif %}
                             </td>
                             <td>{{ patient.fecha_ingreso }}</td>
                             <td>{{ patient.programa }}</td>
+                            <td>
+                                {% if patient.estado.lower == 'activo' %}
+                                    <span class="badge bg-success">
+                                        {{ patient.estado }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger">
+                                        {{ patient.estado }}
+                                    </span>
+                                {% endif %}
                             <td class="text-end">
                                 <a href="{% url "patient_clinical" patient.id %}" class="btn btn-sm btn-outline-dark me-1">
                                     <i class="fa-solid fa-eye"></i>

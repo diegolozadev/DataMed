@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registrar Monitoreo Respiratorio{% endblock title %}
+
+{% block style_extra %}<link rel="stylesheet" href="{% static 'css/exams.css' %}">{% endblock style_extra %}
+
+
+{% block content %}
+    <div class="container mt-4">
+
+        <!-- Header -->
+        <div class="mb-4">
+            <h2 class="fw-bold mb-1">
+                <i class="fa-solid fa-brain me-2 text-warning"></i>
+                Registrar Sesión de Psicología
+            </h2>
+            <p class="text-muted mb-0">
+                Paciente: <strong>{{ patient }}</strong>
+            </p>
+            <hr>
+        </div>
+
+        <!-- Card -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+
+                <form method="post" action="{% url 'register_psicologia' patient.id %}" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-grid">
+                        {% for field in form %}
+                            <div class="form-row-2">
+                                <label for="{{ field.id_for_label }}" class="form-label">
+                                    {{ field.label }}
+                                </label>
+
+                                {{ field }}
+
+                                {% if field.errors %}
+                                    <div class="error">
+                                        {{ field.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <a href="{% url 'patient_clinical' patient.id %}" class="btn btn-secondary me-2">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-floppy-disk me-1"></i>
+                            Guardar Sesión
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+{% endblock content %}
