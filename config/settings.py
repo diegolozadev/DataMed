@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-2uok+%re04g=io1dsx9hqxawkus842772-!#x@xc8e1g%^-*55
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'DataMed.onrender.com'
+    'datamed-3qzg.onrender.com'
 ]
 
 
