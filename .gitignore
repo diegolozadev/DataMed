@@ -7,7 +7,6 @@ env/
 __pycache__/
 *.pyc
 db.sqlite3
-staticfiles/
 
 # Variables de entorno
 .env
