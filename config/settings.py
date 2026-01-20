@@ -39,7 +39,7 @@ ALLOWED_HOSTS = [
 # CSRF Trusted Origins for deployment
 CSRF_TRUSTED_ORIGINS = [
     'http://*',
-    'https://web-production-f66a7.up.railway.app'
+    'https://datamed.up.railway.app'
 ]
 
 # Application definition
