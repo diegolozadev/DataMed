@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-2uok+%re04g=io1dsx9hqxawkus842772-!#x@xc8e1g%^-*55
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'datamed-3qzg.onrender.com'
+    '*',
 ]
 
 
@@ -123,6 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
@@ -132,5 +133,3 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-STATIC_ROOT = BASE_DIR / "staticfiles"
