@@ -104,6 +104,49 @@
 }
 
 
+.section-block {
+    position: relative;
+    padding-left: 3.2rem;
+    margin-bottom: 3rem;
+}
+
+/* Línea vertical */
+.section-block::before {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 38px;
+    width: 3px;
+    height: calc(100% - 38px);
+    background-color: #0d6efd; /* azul del sistema */
+    border-radius: 2px;
+}
+
+/* Icono anclado */
+.section-icon {
+    position: absolute;
+    left: 8px;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    background-color: #0d6efd;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    z-index: 2;
+}
+
+/* Título */
+.section-title {
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+
+
 /* Responsive adjustments */
 @media (max-width: 992px) {
     .form-grid {

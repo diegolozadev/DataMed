@@ -4,8 +4,12 @@
 {% block title %}Inicio de sesión{% endblock %}
 
 {% block style_extra %}
-<link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock %}
+
+{% block navbar %}
+    {# Navbar oculto intencionalmente #}
+{% endblock navbar %}
 
 {% block content %}
 <div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
@@ -47,9 +51,11 @@
                 </button>
             </form>
 
+            <p class="text-center text-muted small mt-3">
+                DataMed - Acceso exclusivo para personal autorizado
+            </p>
 
         </div>
     </div>
-
 </div>
 {% endblock %}

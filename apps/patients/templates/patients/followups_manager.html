@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestión de Seguimiento | DataMed{% endblock title %}
+{% block style_extra %}<link rel="stylesheet" href="{% static 'css/patients.css' %}">{% endblock style_extra %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold"><i class="fa-solid fa-layer-group text-primary me-2"></i>Historial de Seguimientos</h2>
+            <p class="text-muted">Administra los ciclos de atención y consulta el histórico de cada paciente.</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body">
+            <form method="get" class="row g-2">
+                <div class="col-md-10">
+                    <input type="text" name="query_search" class="form-control" 
+                           placeholder="Buscar por nombre o documento..." value="{{ query|default:'' }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-dark w-100">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th class="ps-4">Paciente / Ciclo de Ingreso</th>
+                        <th>Documento</th>
+                        <th>Estado del Ciclo</th>
+                        <th>Mes Cápita</th>
+                        <th class="text-end pe-4">Acciones de Gestión</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                    <tr class="table-secondary">
+                        <td colspan="4" class="fw-bold ps-4">
+                            <i class="fa-solid fa-user-circle me-2"></i>{{ patient.nombre }} {{ patient.apellido }}
+                        </td>
+                        <td class="text-end pe-4">
+                            {% if not patient.esta_activo %}
+                                <button class="btn btn-sm btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#newCycle{{ patient.id }}">
+                                    <i class="fa-solid fa-plus-circle me-1"></i>Nuevo Seguimiento
+                                </button>
+                            {% else %}
+                                <span class="badge bg-info text-dark"><i class="fa-solid fa-spinner fa-spin me-1"></i>Ciclo en Curso</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% for ingreso in patient.ingresos.all|dictsortreversed:"fecha_inicio" %}
+                    <tr class="{% if ingreso.estado == 'ACTIVO' %}table-success{% elif ingreso.estado == 'SUSPENDIDO' %}table-warning{% else %}text-muted{% endif %}">
+                        <td class="ps-5">
+                            <i class="fa-solid fa-calendar-day me-2 {% if ingreso.estado == 'TERMINADO' %}text-muted{% else %}text-primary{% endif %}"></i>
+                            Inició el: {{ ingreso.fecha_inicio|date:"d/m/Y" }}
+                        </td>
+                        <td><small class="text-muted">{{ patient.documento }}</small></td>
+                        <td>
+                            {% if ingreso.estado == 'ACTIVO' %}
+                                <span class="badge rounded-pill bg-success">ACTIVO</span>
+                            {% elif ingreso.estado == 'SUSPENDIDO' %}
+                                <span class="badge rounded-pill bg-warning text-dark">SUSPENDIDO</span>
+                            {% else %}
+                                <span class="badge rounded-pill bg-light text-dark border">TERMINADO</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>Mes {{ ingreso.mes_capita }}</strong></td>
+                        <td class="text-end pe-4">
+                            {% if ingreso.estado == 'ACTIVO' %}
+                                <button class="btn btn-sm btn-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTerminar{{ ingreso.id }}">
+                                    <i class="fa-solid fa-handshake-slash me-1"></i> Terminar Ciclo
+                                </button>
+
+                                <div class="modal fade" id="modalTerminar{{ ingreso.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form action="{% url 'change_status_entry' ingreso.id 'TERMINADO' %}" method="POST" class="modal-content text-start">
+                                            {% csrf_token %}
+                                            <div class="modal-header bg-danger text-white">
+                                                <h5 class="modal-title">Finalizar Atención: {{ patient.nombre }}</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Fecha de Cierre:</label>
+                                                    <input type="date" name="fecha_terminacion" class="form-control" required value="{% now 'Y-m-d' %}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Motivo del Cierre:</label>
+                                                    <select name="motivo_estado" class="form-select" required>
+                                                        <option value="">Seleccione una razón...</option>
+                                                        <option value="Cumplimiento de metas">Cumplimiento de metas</option>
+                                                        <option value="Inasistencia prolongada">Inasistencia prolongada</option>
+                                                        <option value="Traslado de ciudad/EPS">Traslado de ciudad/EPS</option>
+                                                        <option value="Voluntad del paciente">Voluntad del paciente</option>
+                                                        <option value="Fallecimiento">Fallecimiento</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-danger">Confirmar Finalización</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <span class="badge bg-light text-muted border">
+                                    Cerrado: {{ ingreso.fecha_fin|date:"d/m/Y" }}
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    <div class="modal fade" id="newCycle{{ patient.id }}" tabindex="-1" aria-labelledby="newCycleLabel{{ patient.id }}" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <form action="{% url 'create_new_entry' patient.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="modal-header bg-success text-white">
+                              <h5 class="modal-title" id="newCycleLabel{{ patient.id }}">
+                                <i class="fa-solid fa-rocket me-2"></i>Nuevo Ciclo: {{ patient.nombre }}
+                              </h5>
+                              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="alert alert-info py-2">
+                                <small><i class="fa-solid fa-circle-info me-1"></i> Se creará un nuevo registro de ingreso para iniciar el seguimiento desde el Mes 1.</small>
+                              </div>
+                              <div class="mb-3">
+                                <label for="fecha_inicio{{ patient.id }}" class="form-label fw-bold">Fecha de Inicio del Ciclo</label>
+                                <input type="date" name="fecha_inicio" id="fecha_inicio{{ patient.id }}" class="form-control" required value="{% now 'Y-m-d' %}">
+                              </div>
+                            </div>
+                            <div class="modal-footer bg-light">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                              <button type="submit" class="btn btn-success px-4">Activar Paciente</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No se encontraron pacientes registrados.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Monitoreo, Psicologia, Nutricion
+from .models import Monitoreo, Psicologia, Nutricion, Neumologia, Seguimiento, PolisomnografiaBasal, PolisomnografiaTitulacion
 
 # Register your models here.
 
@@ -7,7 +7,7 @@ from .models import Monitoreo, Psicologia, Nutricion
 @admin.register(Monitoreo)
 class MonitoreoAdmin(admin.ModelAdmin):
     list_display = (
-        'patient',
+        'ingreso',
         'modo_ventilatorio',
         'uso_diario',
         'hipopnea_residual',
@@ -35,10 +35,79 @@ class MonitoreoAdmin(admin.ModelAdmin):
 @admin.register(Psicologia)
 class PsicologiaAdmin(admin.ModelAdmin):
     list_display = (
-        'patient',
+        'ingreso',
         'inventario_depre_beck',
         'inventario_ansiedad_beck',
         'escala_atenas',
+        'registrado_por',
+        'created_at',
+    )
+    
+    ordering = ('-created_at',)
+    date_hierarchy = 'created_at'
+
+
+# Registro del modelo Nutricion en el admin de Django
+@admin.register(Nutricion)
+class NutricionAdmin(admin.ModelAdmin):
+    list_display = (
+        'ingreso',
+        'estado_nutricional',
+        'carbohidratos_pct',
+        'rumiacion',
+        'registrado_por',
+        'created_at',
+    )
+
+    search_fields = (
+        'patient__name',
+        'registrado_por__username',
+    )
+
+    ordering = ('-created_at',)
+    date_hierarchy = 'created_at'
+    
+# Registro del modelo Neumologia en el admin de Django
+@admin.register(Neumologia)
+class NeumologiaAdmin(admin.ModelAdmin):
+    list_display = (
+        'ingreso',
+        'registrado_por',
+        'created_at',
+    )
+
+    search_fields = (
+        'patient__name',
+        'registrado_por__username',
+    )
+
+    ordering = ('-created_at',)
+    date_hierarchy = 'created_at'
+    
+
+# Registro del modelo PolisomnografiaBasal en el admin de Django
+@admin.register(PolisomnografiaBasal)
+class PolisomnografiaBasalAdmin(admin.ModelAdmin):
+    list_display = (
+        'ingreso',
+        'registrado_por',
+        'created_at',
+    )
+
+    search_fields = (
+        'patient__name',
+        'registrado_por__username',
+    )
+
+    ordering = ('-created_at',)
+    date_hierarchy = 'created_at'
+    
+
+# Registro del modelo PolisomnografiaTitulacion en el admin de Django
+@admin.register(PolisomnografiaTitulacion)
+class PolisomnografiaTitulacionAdmin(admin.ModelAdmin):
+    list_display = (
+        'ingreso',
         'registrado_por',
         'created_at',
     )
@@ -52,14 +121,13 @@ class PsicologiaAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
 
 
-# Registro del modelo Nutricion en el admin de Django
-@admin.register(Nutricion)
-class NutricionAdmin(admin.ModelAdmin):
+#Registro del modelo Seguimientos en el admin de Django
+@admin.register(Seguimiento)
+class SeguimientosAdmin(admin.ModelAdmin):
     list_display = (
-        'patient',
-        'estado_nutricional',
-        'carbohidratos_pct',
-        'rumiacion',
+        'ingreso',
+        'fecha_atencion',
+        'tipo_servicio',
         'registrado_por',
         'created_at',
     )

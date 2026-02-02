@@ -5,7 +5,7 @@
 
         <!-- Brand -->
         <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
-            <i class="fa-solid fa-heart-pulse me-2 text-danger"></i>
+            <i class="fa-solid fa-hospital-symbol me-1"></i>
             DataMed
         </a>
 
@@ -42,9 +42,9 @@
                 {% endif %}
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa-solid fa-phone me-1"></i>
-                        Llamadas
+                    <a class="nav-link" href="{% url 'patients_follow' %}">
+                        <i class="fa-regular fa-address-book"></i>
+                        Historial
                     </a>
                 </li>
 

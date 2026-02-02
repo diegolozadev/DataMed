@@ -24,16 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2uok+%re04g=io1dsx9hqxawkus842772-!#x@xc8e1g%^-*55'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Django buscará estas variables en el sistema operativo (Railway)
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-dev-key')
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '*',
+    'datamed.up.railway.app',
 ]
 
 # CSRF Trusted Origins for deployment
@@ -96,13 +94,26 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Pegas aquí la "Public Connection String" que te da Railway
-DATABASES = {
-    'default': dj_database_url.config(
-        # Esto busca la variable de entorno llamada DATABASE_URL
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600
-    )
-}
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Railway proporciona la URL de conexión a la base de datos en la variable de entorno DATABASE_URL
+    DATABASES = {
+        'default': dj_database_url.config(
+            # Esto busca la variable de entorno llamada DATABASE_URL
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600
+        )
+    }
+else:
+    # Configuración de base de datos por defecto para desarrollo local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation

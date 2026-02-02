@@ -11,32 +11,69 @@
 
     <!-- Header -->
     <div class="mb-4">
-        <!-- Título + botón -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1 class="mb-0">
                 <i class="fa-solid fa-notes-medical me-2 text-primary"></i>
                 Historia Clínica
             </h1>
 
-            <a href="{% url 'patients_list' %}" class="btn btn-secondary">
-                <i class="fa-solid fa-arrow-left me-1"></i>
-                Volver a la lista
-            </a>
+            <div class="d-flex gap-2">
+                {% if ingreso_actual %}
+                    <span class="badge bg-success d-flex align-items-center px-3 rounded-pill">
+                        <i class="fa-solid fa-circle-check me-2"></i> ACTIVO
+                    </span>
+                {% else %}
+                    <span class="badge bg-danger d-flex align-items-center px-3 rounded-pill">
+                        <i class="fa-solid fa-circle-xmark me-2"></i> SUSPENDIDO
+                    </span>
+                {% endif %}
+
+                <a href="{% url 'patients_list' %}" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Volver
+                </a>
+            </div>
         </div>
 
         <hr>
 
-        <p class="text-muted mb-1">
-            Paciente: <strong>{{ patient }}</strong>
-        </p>
-
-        <p class="text-muted">
-            Fecha ingreso: <strong>{{ patient.fecha_ingreso }}</strong>
-        </p>
+        <div class="row">
+            <div class="col-md-6">
+                <p class="text-muted mb-1">
+                    Paciente: <span class="text-dark fw-bold text-uppercase">{{ patient.nombre }} {{ patient.apellido }}</span>
+                </p>
+                <p class="text-muted mb-0">
+                    Documento: <span class="text-dark">{{ patient.documento }}</span>
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="text-muted mb-1">
+                    Ingreso al Programa: <strong>{{ ingreso_actual.fecha_inicio|date:"d/m/Y" }}</strong>
+                </p>
+            </div>
+        </div>
     </div>
 
 
     <!-- Acciones -->
+    <div class="d-flex gap-2 mb-4">
+        
+        <a href="{% url 'register_basal' patient.id %}" class="btn btn-outline-primary">
+            <i class="fa-solid fa-bed-pulse"></i>
+            Poli Basal
+        </a>
+        
+        <a href="{% url 'register_titulacion' patient.id %}" class="btn btn-outline-primary">
+            <i class="fa-solid fa-bed-pulse"></i>
+            Poli Titulación
+        </a>
+
+        <a href="{% url 'register_equipo_medico' patient.id %}" class="btn btn-outline-primary">
+            <i class="fa-solid fa-kit-medical"></i>
+            Registro Inicial (Equipo Médico)
+        </a>
+
+    </div>
+
     <div class="d-flex gap-2 mb-4">
 
         <a href="{% url 'register_monitoreo' patient.id %}" class="btn btn-primary">
@@ -44,24 +81,33 @@
             Registrar monitoreo
         </a>
 
-        <a href="{% url 'register_psicologia' patient.id %}" class="btn btn-warning text-dark">
+        <a href="{% url 'register_psicologia' patient.id %}" class="btn btn-primary">
             <i class="fa-solid fa-brain me-1"></i>
             Registrar Sesión de Psicología
         </a>
 
-        <a href="{% url 'register_nutricion' patient.id %}" class="btn btn-success">
+        <a href="{% url 'register_nutricion' patient.id %}" class="btn btn-primary">
             <i class="fa-solid fa-apple-whole me-1"></i>
             Registrar Sesión de Nutrición
         </a>
 
+        <a href="{% url 'register_neumologia' patient.id %}" class="btn btn-primary">
+            <i class="fa-solid fa-user-doctor me-1"></i>
+            Registrar Sesión de Neumología
+        </a>
     </div>
 
-    <!-- ================= MONITOREO ================= -->
-    <section class="mb-5">
+    <!-- ================= Polisomnografia Basal ================= -->
+    <section class="section-block">
+
+        <!-- Icono anclado -->
+        <div class="section-icon">
+            <i class="fa-solid fa-bed-pulse"></i>
+        </div>
+
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="mb-0">
-                <i class="fa-solid fa-lungs me-2 text-danger"></i>
-                Monitoreo respiratorio
+            <h4 class="section-title">
+                Polisomnografía Basal
             </h4>
         </div>
 
@@ -71,16 +117,152 @@
                     <thead class="table-light">
                         <tr>
                             <th>Fecha</th>
+                            <th>IAH</th>
+                            <th>Severidad Apnea</th>
+                            <th>IDO</th>
+                            <th>Registrado Por</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for basal in basales %}
+                        <tr>
+                            <td>{{ basal.fecha_basal|date:"d/m/Y" }}</td>
+                            <td>{{ basal.iah }}</td>
+                            <td>{{ basal.severidad_apnea }}</td>
+                            <td>{{ basal.ido }}</td>
+                            <td>{{ basal.registrado_por }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4 fst-italic">
+                                No hay registros de polisomnografía Basal.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- ================= Polisomnografia Titulacion ================= -->
+    <section class="section-block">
+
+        <div class="section-icon">
+            <i class="fa-solid fa-bed-pulse"></i>
+        </div>
+
+        <h4 class="section-title">Polisomnografía Titulación</h4>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Presión IPAP</th>
+                            <th>Presión EPAP</th>
+                            <th>Registrado por</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for titulacion in titulaciones %}
+                        <tr>
+                            <td>{{ titulacion.fecha_titulacion|date:"d/m/Y" }}</td>
+                            <td>{{ titulacion.tipo_titulacion }}</td>
+                            <td>{{ titulacion.presion_ipap }}</td>
+                            <td>{{ titulacion.presion_epap }}</td>
+                            <td>{{ titulacion.registrado_por }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4 fst-italic">
+                                No hay registros de polisomnografía de titulación.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ================= Equipo Medico Inicio ================= -->
+    <section class="section-block">
+
+        <div class="section-icon">
+            <i class="fa-solid fa-kit-medical"></i>
+        </div>
+
+        <h4 class="section-title">Equipo Médico Inicio</h4>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Talla máscara</th>
+                            <th>Marca equipo</th>
+                            <th>Serial</th>
+                            <th>Modo</th>
+                            <th>Registrado por</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for equipo in equipos_medicos %}
+                        <tr>
+                            <td>{{ equipo.created_at|date:"d/m/Y" }}</td>
+                            <td>{{ equipo.talla_mascara }}</td>
+                            <td>{{ equipo.marca_equipo }}</td>
+                            <td>{{ equipo.serial_equipo }}</td>
+                            <td>{{ equipo.modo_ventilatorio }}</td>
+                            <td>{{ equipo.registrado_por }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4 fst-italic">
+                                No hay registros de equipo médico.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- ================= MONITOREO ================= -->
+    <section class="section-block">
+
+        <div class="section-icon">
+            <i class="fa-solid fa-lungs"></i>
+        </div>
+
+        <h4 class="section-title">Monitoreo Respiratorio</h4>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Fecha</th>
                             <th>% Uso diario</th>
-                            <th>% días uso > 4 horas</th>
-                            <th>Índice hipopneas BASAL</th>
-                            <th>Índice hipopneas RESIDUAL</th>
+                            <th>% días &gt; 4h</th>
+                            <th>Hipopnea basal</th>
+                            <th>Hipopnea residual</th>
                             <th>IPAP</th>
                             <th>EPAP</th>
                             <th>Modo</th>
-                            <th>Mascara</th>
+                            <th>Máscara</th>
                             <th>Tamaño</th>
-                            <th>EtCO2</th>
+                            <th>EtCO₂</th>
                             <th>Registrado por</th>
                         </tr>
                     </thead>
@@ -102,8 +284,8 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="13" class="text-center text-muted py-4 fst-italic">
-                                No hay registros de monitoreo.
+                            <td colspan="12" class="text-center text-muted py-4 fst-italic">
+                                No hay registros de monitoreo respiratorio.
                             </td>
                         </tr>
                         {% endfor %}
@@ -111,14 +293,18 @@
                 </table>
             </div>
         </div>
+
     </section>
 
+
     <!-- ================= PSICOLOGÍA ================= -->
-    <section class="mb-5">
-        <h4 class="mb-2">
-            <i class="fa-solid fa-brain me-2 text-warning"></i>
-            Psicología
-        </h4>
+    <section class="section-block">
+
+        <div class="section-icon">
+            <i class="fa-solid fa-brain"></i>
+        </div>
+
+        <h4 class="section-title">Psicología</h4>
 
         <div class="card shadow-sm">
             <div class="card-body p-0">
@@ -126,9 +312,9 @@
                     <thead class="table-light">
                         <tr>
                             <th>Fecha</th>
-                            <th>Depresión de Beck(BDI)</th>
-                            <th>Ansiedad de Beck(BAI)</th>
-                            <th>Escala Atenas (1 a 10)</th>
+                            <th>BDI</th>
+                            <th>BAI</th>
+                            <th>Escala Atenas</th>
                             <th>Registrado por</th>
                         </tr>
                     </thead>
@@ -152,14 +338,18 @@
                 </table>
             </div>
         </div>
+
     </section>
 
+
     <!-- ================= NUTRICIÓN ================= -->
-    <section class="mb-5">
-        <h4 class="mb-2">
-            <i class="fa-solid fa-apple-whole me-2 text-success"></i>
-            Nutrición
-        </h4>
+    <section class="section-block">
+
+        <div class="section-icon">
+            <i class="fa-solid fa-apple-whole"></i>
+        </div>
+
+        <h4 class="section-title">Nutrición</h4>
 
         <div class="card shadow-sm">
             <div class="card-body p-0">
@@ -167,10 +357,10 @@
                     <thead class="table-light">
                         <tr>
                             <th>Fecha</th>
-                            <th>Estado Nutricional</th>
-                            <th>Carbohidratos</th>
-                            <th>Rumiación Nocturna</th>
-                            <th>Consumo de Cafeína</th>
+                            <th>Estado nutricional</th>
+                            <th>Carbohidratos %</th>
+                            <th>Rumiación</th>
+                            <th>Cafeína</th>
                             <th>Registrado por</th>
                         </tr>
                     </thead>
@@ -197,6 +387,7 @@
         </div>
 
     </section>
+
 
 </div>
 

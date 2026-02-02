@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from apps.patients.models import Patient
+from apps.patients.models import Patient, Ingreso
 
 # Create your models here.
 
@@ -27,11 +27,13 @@ class Monitoreo(models.Model):
         ("LARGE", "Large")
     ]
     
-    # Relación con el modelo Patient
-    patient = models.ForeignKey(
-        Patient,
+    # Relación con el modelo Ingreso
+    ingreso = models.ForeignKey(
+        Ingreso,
         on_delete=models.CASCADE,
-        related_name='monitoreos'
+        related_name='monitoreos',
+        blank=True,
+        null=True
     )
     
     # Relación con el modelo User
@@ -57,18 +59,20 @@ class Monitoreo(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.patient} - {self.modo_ventilatorio} - {self.created_at.date()}"
+        return f"{self.ingreso.paciente.nombre} - {self.modo_ventilatorio} - {self.created_at.date()}"
     
     
 
 # Modelo para guardar los datos de psicologia de un paciente
 class Psicologia(models.Model):
     
-    # Relación con el modelo Patient
-    patient = models.ForeignKey(
-        Patient,
+    # Relación con el modelo Ingreso
+    ingreso = models.ForeignKey(
+        Ingreso,
         on_delete=models.CASCADE,
-        related_name='psicologias'
+        related_name='psicologias',
+        blank=True,
+        null=True
     )
     
     # Relación con el modelo User
@@ -88,7 +92,7 @@ class Psicologia(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.patient} - {self.escala_atenas} - {self.created_at.date()}"
+        return f"{self.ingreso.paciente.nombre} - {self.escala_atenas} - {self.created_at.date()}"
 
 
 
@@ -109,11 +113,13 @@ class Nutricion(models.Model):
         ("NO", "No"),
     ]
     
-    # Relación con el modelo Patient
-    patient = models.ForeignKey(
-        Patient,
+    # Relación con el modelo Ingreso
+    ingreso = models.ForeignKey(
+        Ingreso,
         on_delete=models.CASCADE,
-        related_name='nutriciones'
+        related_name='nutriciones',
+        blank=True,
+        null=True
     )
     
     # Relación con el modelo User
@@ -138,4 +144,226 @@ class Nutricion(models.Model):
         verbose_name_plural = 'Nutriciones'
     
     def __str__(self):
-        return f"{self.patient} - {self.estado_nutricional} - {self.created_at.date()}"
+        return f"{self.ingreso.paciente.nombre} - {self.estado_nutricional} - {self.created_at.date()}"
+    
+
+
+# Vista para registrar datos de neumologia
+class Neumologia(models.Model):
+    
+    # Relación con el modelo Ingreso
+    ingreso = models.ForeignKey(
+        Ingreso, 
+        on_delete=models.CASCADE,
+        related_name='neumologias',
+        blank=True,
+        null=True
+    )
+
+    # Relación con el modelo User
+    registrado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='neumologias_registradas'
+    )
+    
+    fecha_consulta = models.DateField()
+    medico_tratante = models.CharField(max_length=100)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.ingreso.paciente.nombre} - Consulta: {self.fecha_consulta}"
+    
+    
+# Modelo para guardar los datos de polisomnografía basal de un paciente
+class PolisomnografiaBasal(models.Model):
+    
+    SEVERIDAD_APNEA = [
+        ("LEVE", "Leve"),
+        ("MODERADA", "Moderada"),
+        ("NORAMAL", "Normal"),
+        ("SEVERA", "Severa"),
+    ]
+    
+    # Relación con el modelo Ingreso
+    ingreso = models.ForeignKey(
+        Ingreso,
+        on_delete=models.CASCADE,
+        related_name='polisomnografias_basales',
+        blank=True,
+        null=True
+    )
+    
+    # Relación con el modelo User
+    registrado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='polisomnografias_basales_registradas'
+    )
+    
+    fecha_basal = models.DateField()
+    iah = models.DecimalField(max_digits=5, decimal_places=2)
+    severidad_apnea = models.CharField(choices=SEVERIDAD_APNEA, max_length=50)
+    ido = models.DecimalField(max_digits=5, decimal_places=2)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Polisomnografía Basal'
+        verbose_name_plural = 'Polisomnografías Basales'
+    
+    def __str__(self):
+        return f"{self.ingreso.paciente.nombre} - AHI: {self.severidad_apnea} - {self.fecha_basal}"
+    
+    
+# Modelo para guardar los datos de polisomnografía de tittulación de un paciente
+class PolisomnografiaTitulacion(models.Model):
+    
+    TIPOS_TITULACION = [
+        ("CPAP", "CPAP"),
+        ("BPAP", "BPAP"),
+    ]
+    
+    # Relación con el modelo Ingreso
+    ingreso = models.ForeignKey(
+        Ingreso,
+        on_delete=models.CASCADE,
+        related_name='polisomnografias_titulaciones',
+        blank=True,
+        null=True
+    )
+    
+    # Relación con el modelo User
+    registrado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='polisomnografias_titulaciones_registradas'
+    )
+    
+    
+    tipo_titulacion = models.CharField(
+        choices=TIPOS_TITULACION, 
+        max_length=20, 
+        null=True, 
+        blank=True,
+        verbose_name='Tipo de Titulación')
+    
+    
+    fecha_titulacion = models.DateField()
+    presion_ipap = models.DecimalField(max_digits=5, decimal_places=2)
+    presion_epap = models.DecimalField(max_digits=5, decimal_places=2)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Polisomnografía de Titulación'
+        verbose_name_plural = 'Polisomnografías de Titulación'
+    
+    def __str__(self):
+        return f"{self.ingreso.paciente.nombre} - Titulación: {self.fecha_titulacion}"
+    
+    
+# Modelo para guardar los datos de equipo médico de un paciente
+class EquipoMedico(models.Model):
+    
+    TIPOS_MASCARAS = [
+        ("PILLOW NASAL", "Pillow nasal"),
+        ("NASAL", "Nasal"),
+        ("ORONASAL", "Oronasal")
+    ]
+    
+    TALLAS_MASCARAS = [
+        ("SMALL", "Small"),
+        ("MEDIUM", "Medium"),
+        ("LARGE", "Large")
+    ]
+    
+    MARCA_EQUIPOS = [
+        ("BMC", "BMC"),
+        ("RESMED", "ResMed"),
+        ("PHILIPS RESPIRONICS", "Philips RespiroNics"),
+        ("SEFAN", "Sefan"),
+        ("DAM", "Dam"),
+        ("RESVENT", "Resvent"),
+        ("CURATIVE", "Curative"),
+        ("PRISMA", "Prisma"),
+        ("DEVILBIS", "Devilbis")
+    ]
+    
+    MODO_VENTILATORIO = [
+        ("CPAP", "CPAP"),
+        ("BiPAP", "BiPAP"),
+        ("BiPAP ST", "BiPAP ST"),
+        ("AUTOCPAP", "AUTOCPAP"),
+        ("AUTOBPAP", "AUTOBPAP")
+    ]
+    
+    # Relación con el modelo Ingreso
+    ingreso = models.ForeignKey(
+        Ingreso,
+        on_delete=models.CASCADE,
+        related_name='equipos_medicos',
+        blank=True,
+        null=True
+    )
+    
+    # Relación con el modelo User
+    registrado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='equipos_medicos_registrados'
+    )
+    
+    talla_mascara = models.CharField(choices=TALLAS_MASCARAS, max_length=20)
+    marca_equipo = models.CharField(choices=MARCA_EQUIPOS, max_length=100)
+    serial_equipo = models.CharField(max_length=100)
+    modo_ventilatorio = models.CharField(choices=MODO_VENTILATORIO, max_length=20)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.ingreso.paciente.nombre} - Equipo: {self.marca_equipo} - {self.created_at.date()}"
+    
+    
+# Modelo para guardar los datos de seguimiento de un paciente
+class Seguimiento(models.Model):
+    
+    # Relación con el modelo Ingreso
+    ingreso = models.ForeignKey(
+        Ingreso,
+        on_delete=models.CASCADE,
+        related_name='seguimientos',
+        blank=True,
+        null=True
+    )
+    
+    # Relación con el modelo User
+    registrado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='seguimientos_registrados'
+    )
+    
+    fecha_atencion = models.DateField()
+    tipo_servicio = models.CharField(max_length=100)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Seguimiento'
+        verbose_name_plural = 'Seguimientos'
+        ordering = ['-fecha_atencion']
+    
+    def __str__(self):
+        return f"{self.ingreso.paciente.nombre} - Seguimiento: {self.tipo_servicio} - {self.fecha_atencion}"

@@ -21,7 +21,9 @@
 <body>
 
     <!-- navbar -->
-    {% include 'includes/navbar.html' %}
+    {% block navbar %}
+        {% include 'includes/navbar.html' %}
+    {% endblock %}
 
     <!-- CONTENIDO -->
     <main class="container py-4">
@@ -38,7 +40,6 @@
         <small class="text-muted">
             &copy; 2025 DataMed hecho con <i class="fa-solid fa-heart text-danger"></i> por el equipo DataINO.
         </small>
-
     </div>
 
     {% block script_extra %}

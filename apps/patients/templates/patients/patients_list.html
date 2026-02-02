@@ -1,22 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block title %}Lista de Pacientes{% endblock title %}
-
 {% block style_extra %}<link rel="stylesheet" href="{% static 'css/patients.css' %}">{% endblock style_extra %}
 
-
 {% block content %}
-
 <div class="container mt-4">
-
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="fw-bold mb-0">
             <i class="fa-solid fa-user-group me-2 text-primary"></i>
-            Lista de Pacientes
+            Lista de Pacientes Activos
         </h2>
-
         <a href="{% url 'create_patient' %}" class="btn btn-primary">
             <i class="fa-solid fa-plus me-1"></i> Nuevo paciente
         </a>
@@ -34,96 +28,86 @@
                     value="{{ query|default_if_none:'' }}"
                 >
             </div>
-
-            <button type="submit" class="btn btn-primary">
-                Buscar
-            </button>
+            <button type="submit" class="btn btn-primary">Buscar</button>
         </form>
     </div>
 
-
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
-
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
                             <th>Nombre</th>
-                            <th>Apellido</th>
                             <th>Documento</th>
-                            <th>Fecha de Nacimiento</th>
+                            <th>Edad / Nacimiento</th>
                             <th>Género</th>
                             <th>Fecha de Ingreso</th>
-                            <th>Programa</th>
-                            <th>Estado</th>
+                            <th>Mes Cápita</th> <th>Estado</th>
                             <th class="text-end">Acciones</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         {% for patient in patients %}
                         <tr>
-                            <td class="fw-semibold">{{ patient.nombre }}</td>
-                            <td>{{ patient.apellido }}</td>
-                            <td>{{ patient.documento }}</td>
-                            <td>{{ patient.fecha_nacimiento }}</td>
                             <td>
-                                {% if patient.genero.lower == 'm' %}
-                                    <span class="badge bg-primary">
-                                        {{ patient.genero }}
-                                    </span>
-                                {% elif patient.genero.lower == 'f' %}
-                                    <span class="badge bg-warning text-dark">
-                                        {{ patient.genero }}
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-secondary">
-                                        {{ patient.genero }}
-                                    </span>
-                                {% endif %}
+                                <div class="fw-semibold">{{ patient.nombre }} {{ patient.apellido }}</div>
+                                <small class="text-muted">{{ patient.programa }}</small>
                             </td>
-                            <td>{{ patient.fecha_ingreso }}</td>
-                            <td>{{ patient.programa }}</td>
+                            <td>{{ patient.documento }}</td>
+                            <td>{{ patient.fecha_nacimiento|date:"d/m/Y" }}</td>
                             <td>
-                                {% if patient.estado.lower == 'activo' %}
-                                    <span class="badge bg-success">
-                                        {{ patient.estado }}
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-danger">
-                                        {{ patient.estado }}
-                                    </span>
-                                {% endif %}
+                                {% with g=patient.genero.upper %}
+                                    {% if g == 'M' %}
+                                        <span class="badge bg-primary">M</span>
+                                    {% elif g == 'F' %}
+                                        <span class="badge bg-warning text-dark">F</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ g }}</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                            
+                            {# ACCESO A LA DATA RELACIONADA (TABLA INGRESO) #}
+                            <td>
+                                {% with ingreso=patient.ingresos.all.last %}
+                                    {{ ingreso.fecha_inicio|date:"d/m/Y"|default:"--" }}
+                                {% endwith %}
+                            </td>
+                            
+                            <td>
+                                <span class="badge outline-info text-dark border">
+                                {% with ingreso=patient.ingresos.all.last %}
+                                    {{ ingreso.mes_capita }}
+                                {% endwith %}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-success">Activo</span>
+                            </td>
+
                             <td class="text-end">
-                                <a href="{% url "patient_clinical" patient.id %}" class="btn btn-sm btn-outline-dark me-1">
+                                <a href="{% url 'patient_clinical' patient.id %}" class="btn btn-sm btn-outline-dark" title="Ver Clínica">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="{% url "patient_detail" patient.id %}" class="btn btn-sm btn-outline-warning me-1">
+                                <a href="{% url 'patient_detail' patient.id %}" class="btn btn-sm btn-outline-warning" title="Editar">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-4">
+                            <td colspan="8" class="text-center text-muted py-4">
                                 <i class="fa-solid fa-user-slash me-2"></i>
-                                No hay pacientes registrados
+                                No se encontraron pacientes activos
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
-
                 </table>
             </div>
-
         </div>
     </div>
 </div>
-
 {% endblock content %}
-
-{% block script_extra %}
-    <script src="{% static 'js/alerts.js' %}"></script>
-{% endblock script_extra %}
-    
