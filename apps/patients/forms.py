@@ -47,7 +47,7 @@ class PatientForm(forms.ModelForm):
             'altura': forms.NumberInput(attrs={'class': 'form-control'}),
             'perimetro_abdominal': forms.NumberInput(attrs={'class': 'form-control'}),
             'cuello': forms.NumberInput(attrs={'class': 'form-control'}),
-            'medico_remitente': forms.Select(attrs={'class': 'form-control'}),
+            'medico_remitente': forms.TextInput(attrs={'class': 'form-control'}),
             'especialidad': forms.TextInput(attrs={'class': 'form-control'}),
             'diagnostico_clinico': forms.Select(attrs={'class': 'form-control'}),
             'programa': forms.Select(attrs={'class': 'form-control'}),
