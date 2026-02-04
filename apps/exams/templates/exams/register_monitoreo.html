@@ -12,8 +12,8 @@
         <!-- Header -->
         <div class="mb-4">
             <h2 class="fw-bold mb-1">
-                <i class="fa-solid fa-lungs me-2 text-danger"></i>
-                Registrar Monitoreo Respiratorio
+                <i class="fa-solid fa-lungs me-2 text-primary"></i>
+                Registrar Adaptación
             </h2>
             <p class="text-muted mb-0">
                 Paciente: <strong>{{ patient }}</strong>
@@ -62,3 +62,6 @@
 
     </div>
 {% endblock content %}
+{% block script_extra %}
+    <script src="{% static 'js/register_monitoreo.js' %}"></script>
+{% endblock script_extra %}

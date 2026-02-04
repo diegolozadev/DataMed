@@ -9,7 +9,7 @@ from django.db.models import Max, Q
 @login_required
 def dashboard(request):
     hoy = timezone.now().date()
-    limite = hoy - timezone.timedelta(days=30)
+    limite = hoy - timezone.timedelta(days=15)
     
     # 1. Total de pacientes con al menos un ingreso activo
     patients = Patient.objects.filter(ingresos__estado='ACTIVO').distinct().count()

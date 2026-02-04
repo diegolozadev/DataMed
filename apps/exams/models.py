@@ -11,8 +11,6 @@ class Monitoreo(models.Model):
         ("CPAP", "CPAP"),
         ("BPAP", "BPAP"),
         ("BPAP ST", "BPAP ST"),
-        ("AUTOCPAP", "AUTOCPAP"),
-        ("AUTOBPAP", "AUTOBPAP")
     ]
     
     MASCARAS_CPAP = [
@@ -49,9 +47,9 @@ class Monitoreo(models.Model):
     dias_uso_horas = models.DecimalField(max_digits=5, decimal_places=2)
     hipopnea_basal = models.DecimalField(max_digits=5, decimal_places=2)
     hipopnea_residual = models.DecimalField(max_digits=5, decimal_places=2)
+    modo_ventilatorio = models.CharField(max_length=20, choices=MODOS_VENTILATORIOS)
     presion_ipap = models.DecimalField(max_digits=5, decimal_places=2)
     presion_epap = models.DecimalField(max_digits=5, decimal_places=2)
-    modo_ventilatorio = models.CharField(max_length=20, choices=MODOS_VENTILATORIOS)
     mascara_cpap = models.CharField(max_length=20, choices=MASCARAS_CPAP)
     tamano_mascara = models.CharField(max_length=20, choices=TAMANO_MASCARA)
     etco2_promedio = models.DecimalField(max_digits=5, decimal_places=2)
@@ -210,6 +208,7 @@ class PolisomnografiaBasal(models.Model):
     iah = models.DecimalField(max_digits=5, decimal_places=2)
     severidad_apnea = models.CharField(choices=SEVERIDAD_APNEA, max_length=50)
     ido = models.DecimalField(max_digits=5, decimal_places=2)
+    eficiencia = models.DecimalField(max_digits=5, decimal_places=2)
     
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -227,6 +226,18 @@ class PolisomnografiaTitulacion(models.Model):
     TIPOS_TITULACION = [
         ("CPAP", "CPAP"),
         ("BPAP", "BPAP"),
+    ]
+    
+    TALLAS_MASCARAS = [
+        ("SMALL", "Small"),
+        ("MEDIUM", "Medium"),
+        ("LARGE", "Large")
+    ]
+    
+    TIPOS_MASCARAS = [
+        ("PILLOW NASAL", "Pillow nasal"),
+        ("NASAL", "Nasal"),
+        ("ORONASAL", "Oronasal")
     ]
     
     # Relación con el modelo Ingreso
@@ -259,6 +270,8 @@ class PolisomnografiaTitulacion(models.Model):
     fecha_titulacion = models.DateField()
     presion_ipap = models.DecimalField(max_digits=5, decimal_places=2)
     presion_epap = models.DecimalField(max_digits=5, decimal_places=2)
+    talla_mascara = models.CharField(choices=TALLAS_MASCARAS, max_length=20, default='No especificado')
+    tipo_mascara = models.CharField(choices=TIPOS_MASCARAS, max_length=20, default='No especificado')
     
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -272,12 +285,6 @@ class PolisomnografiaTitulacion(models.Model):
     
 # Modelo para guardar los datos de equipo médico de un paciente
 class EquipoMedico(models.Model):
-    
-    TIPOS_MASCARAS = [
-        ("PILLOW NASAL", "Pillow nasal"),
-        ("NASAL", "Nasal"),
-        ("ORONASAL", "Oronasal")
-    ]
     
     TALLAS_MASCARAS = [
         ("SMALL", "Small"),
@@ -301,8 +308,6 @@ class EquipoMedico(models.Model):
         ("CPAP", "CPAP"),
         ("BiPAP", "BiPAP"),
         ("BiPAP ST", "BiPAP ST"),
-        ("AUTOCPAP", "AUTOCPAP"),
-        ("AUTOBPAP", "AUTOBPAP")
     ]
     
     # Relación con el modelo Ingreso
@@ -323,6 +328,7 @@ class EquipoMedico(models.Model):
         related_name='equipos_medicos_registrados'
     )
     
+    tipo_mascara_eq_medico = models.CharField(max_length=100)
     talla_mascara = models.CharField(choices=TALLAS_MASCARAS, max_length=20)
     marca_equipo = models.CharField(choices=MARCA_EQUIPOS, max_length=100)
     serial_equipo = models.CharField(max_length=100)

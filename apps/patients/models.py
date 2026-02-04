@@ -90,7 +90,7 @@ class Patient(models.Model):
     especialidad = models.CharField(max_length=100)
     diagnostico_clinico = models.TextField(max_length=1000, choices=[("G47.3", "Apnea del Sueño")])
     programa = models.CharField(max_length=100, choices=[("PROGRAMA AOS", "Programa aos"), ("PROGRAMA INSOMNIO", "Programa Insomnio")])
-    valor_capita = models.DecimalField(max_digits=10,decimal_places=2, default=284000)
+    valor_capita = models.DecimalField(max_digits=10,decimal_places=2, default=259783)
     
     @property
     def ingreso_activo(self):
