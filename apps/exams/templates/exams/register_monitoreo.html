@@ -37,10 +37,12 @@
                 <div class="col-md-4">
                     <label class="form-label">{{ form.dias_uso_horas_4.label }}</label>
                     {{ form.dias_uso_horas_4 }}
+                    <div class="text-danger small">{{ form.uso_diario.errors }}</div>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ form.horas_uso_diario.label }}</label>
                     {{ form.horas_uso_diario }}
+                    <div class="text-danger small">{{ form.uso_diario.errors }}</div>
                 </div>
             </div>
 
@@ -58,10 +60,14 @@
                 <div class="col-md-4">
                     <label class="form-label">{{ form.hipopnea_residual.label }}</label>
                     {{ form.hipopnea_residual }}
+                    <div class="text-danger small">{{ form.uso_diario.errors }}</div>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Porcentaje Corrección</label>
-                    <input type="text" id="id_porcentaje_correccion" class="form-control bg-light fw-bold" readonly placeholder="Calculando...">
+                    <label class="form-label">{{ form.porcentaje_correccion.label }}</label>
+                    <div class="input-group">
+                            {{ form.porcentaje_correccion }}
+                            <span class="input-group-text">%</span>
+                    </div>
                 </div>
             </div>
 
@@ -69,18 +75,22 @@
                 <div class="col-md-3">
                     <label class="form-label">{{ form.modo_ventilatorio.label }}</label>
                     {{ form.modo_ventilatorio }}
+                    <div class="text-danger small">{{ form.uso_diario.errors }}</div>
                 </div>
                 <div class="col-md-3" id="col_ipap"> 
                     <label class="form-label">{{ form.presion_ipap.label }}</label>
                     {{ form.presion_ipap }}
+                    <div class="text-danger small">{{ form.uso_diario.errors }}</div>
                 </div>
                 <div class="col-md-3" id="col_epap"> 
                     <label class="form-label">{{ form.presion_epap.label }}</label>
                     {{ form.presion_epap }}
+                    <div class="text-danger small">{{ form.uso_diario.errors }}</div>
                 </div>
                 <div class="col-md-3" id="col_frecuencia"> 
                     <label class="form-label">{{ form.frecuencia_respiratoria.label }}</label>
                     {{ form.frecuencia_respiratoria }}
+                    <div class="text-danger small">{{ form.uso_diario.errors }}</div>
                 </div>
             </div>
 
@@ -88,10 +98,12 @@
                 <div class="col-md-4">
                     <label class="form-label">{{ form.mascara_cpap.label }}</label>
                     {{ form.mascara_cpap }}
+                    <div class="text-danger small">{{ form.uso_diario.errors }}</div>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ form.tamano_mascara.label }}</label>
                     {{ form.tamano_mascara }}
+                    <div class="text-danger small">{{ form.uso_diario.errors }}</div>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ form.etco2_promedio.label }}</label>

@@ -1,396 +1,233 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Historia Clínica{% endblock title %}
+{% block title %}Historia Clínica - {{ patient.nombre }} {{ patient.apellido }}{% endblock title %}
 
 {% block style_extra %}<link rel="stylesheet" href="{% static 'css/patients.css' %}">{% endblock style_extra %}
 
 {% block content %}
-
 <div class="container mt-4">
 
-    <!-- Header -->
-    <div class="mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 class="mb-0">
-                <i class="fa-solid fa-notes-medical me-2 text-primary"></i>
-                Historia Clínica
-            </h1>
-
-            <div class="d-flex gap-2">
-                {% if ingreso_actual %}
-                    <span class="badge bg-success d-flex align-items-center px-3 rounded-pill">
-                        <i class="fa-solid fa-circle-check me-2"></i> ACTIVO
-                    </span>
-                {% else %}
-                    <span class="badge bg-danger d-flex align-items-center px-3 rounded-pill">
-                        <i class="fa-solid fa-circle-xmark me-2"></i> SUSPENDIDO
-                    </span>
-                {% endif %}
-
-                <a href="{% url 'patients_list' %}" class="btn btn-outline-secondary">
-                    <i class="fa-solid fa-arrow-left me-1"></i> Volver
-                </a>
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="h3 mb-0 text-primary fw-bold">
+                    <i class="fa-solid fa-notes-medical me-2"></i>Historia Clínica
+                </h1>
+                <div class="d-flex gap-2">
+                    {% if ingreso_actual %}
+                        <span class="badge bg-success px-3 rounded-pill d-flex align-items-center">
+                            <i class="fa-solid fa-circle-check me-2"></i>ACTIVO
+                        </span>
+                    {% else %}
+                        <span class="badge bg-danger px-3 rounded-pill d-flex align-items-center">
+                            <i class="fa-solid fa-circle-xmark me-2"></i>SUSPENDIDO
+                        </span>
+                    {% endif %}
+                    <a href="{% url 'patients_list' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fa-solid fa-arrow-left me-1"></i>Volver
+                    </a>
+                </div>
             </div>
-        </div>
-
-        <hr>
-
-        <div class="row">
-            <div class="col-md-6">
-                <p class="text-muted mb-1">
-                    Paciente: <span class="text-dark fw-bold text-uppercase">{{ patient.nombre }} {{ patient.apellido }}</span>
-                </p>
-                <p class="text-muted mb-0">
-                    Documento: <span class="text-dark">{{ patient.documento }}</span>
-                </p>
-            </div>
-            <div class="col-md-6 text-md-end">
-                <p class="text-muted mb-1">
-                    Ingreso al Programa: <strong>{{ ingreso_actual.fecha_inicio|date:"d/m/Y" }}</strong>
-                </p>
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <p class="text-muted mb-1">Paciente: <span class="text-dark fw-bold text-uppercase">{{ patient.nombre }} {{ patient.apellido }}</span></p>
+                    <p class="text-muted mb-0">Documento: <span class="text-dark">{{ patient.documento }}</span></p>
+                </div>
+                <div class="col-md-4 border-start border-end text-center">
+                    {% if ultima_cita %}
+                        <small class="text-muted d-block text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Última Cita</small>
+                        <span class="text-dark d-block my-1">
+                            <i class="fa-solid fa-calendar-day me-1" style="color: #345499;"></i> {{ ultima_cita.created_at|date:"d/m/Y" }}
+                        </span>
+                        <div class="d-flex justify-content-center gap-1">
+                            <span class="badge bg-light text-secondary border small">{{ ultima_cita.tipo_servicio }}</span>
+                            <span class="badge bg-light text-secondary border small">{{ ultima_cita.registrado_por.username }}</span>
+                        </div>
+                    {% else %}
+                        <small class="text-muted fst-italic">Sin actividad registrada</small>
+                    {% endif %}
+                </div>
+                <div class="col-md-3 text-md-end">
+                    <p class="text-muted mb-1 fw-bold">Ingreso al Programa:</p>
+                    <i class="fa-solid fa-calendar-day me-1" style="color: #345499;"></i>
+                    <strong class="text-dark">{{ ingreso_actual.fecha_inicio|date:"d/m/Y"|default:"--" }}</strong>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="mb-4 p-3 bg-light rounded-3 border">
+        <div class="row g-3">
+            <div class="col-auto">
+                <div class="d-flex flex-column gap-2">
+                    <small class="text-muted fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Fase de Ingreso
+                    </small>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'register_basal' patient.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fa-solid fa-bed-pulse me-1"></i>PSG Basal
+                        </a>
+                        <a href="{% url 'register_titulacion' patient.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fa-solid fa-bed-pulse me-1"></i>PSG Titulación
+                        </a>
+                        <a href="{% url 'register_equipo_medico' patient.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fa-solid fa-kit-medical me-1"></i>Registro Inicial (Equipo)
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Acciones -->
-    <div class="d-flex gap-2 mb-4">
-        
-        <a href="{% url 'register_basal' patient.id %}" class="btn btn-outline-primary">
-            <i class="fa-solid fa-bed-pulse"></i>
-            PSG Basal
-        </a>
-        
-        <a href="{% url 'register_titulacion' patient.id %}" class="btn btn-outline-primary">
-            <i class="fa-solid fa-bed-pulse"></i>
-            PSG Titulación
-        </a>
+            <div class="col-auto d-none d-md-block">
+                <div class="vr h-100 text-muted"></div>
+            </div>
 
-        <a href="{% url 'register_equipo_medico' patient.id %}" class="btn btn-outline-primary">
-            <i class="fa-solid fa-kit-medical"></i>
-            Registro Inicial (Equipo Médico)
-        </a>
-
+            <div class="col-auto">
+                <div class="d-flex flex-column gap-2">
+                    <small class="text-muted fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <i class="fa-solid fa-rotate me-1"></i> Seguimiento del Programa
+                    </small>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'register_monitoreo' patient.id %}" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-lungs me-1"></i>Adaptación
+                        </a>
+                        <a href="{% url 'register_psicologia' patient.id %}" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-brain me-1"></i>Psicología
+                        </a>
+                        <a href="{% url 'register_nutricion' patient.id %}" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-apple-whole me-1"></i>Nutrición
+                        </a>
+                        <a href="{% url 'register_neumologia' patient.id %}" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-user-doctor me-1"></i>Neumología
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="d-flex gap-2 mb-4">
+    <h2 class="h4 fw-bold mb-4 text-muted">EXÁMENES DE INGRESO</h2>
 
-        <a href="{% url 'register_monitoreo' patient.id %}" class="btn btn-primary">
-            <i class="fa-solid fa-lungs me-1"></i>
-            Adaptación
-        </a>
-
-        <a href="{% url 'register_psicologia' patient.id %}" class="btn btn-primary">
-            <i class="fa-solid fa-brain me-1"></i>
-            Registrar Sesión de Psicología
-        </a>
-
-        <a href="{% url 'register_nutricion' patient.id %}" class="btn btn-primary">
-            <i class="fa-solid fa-apple-whole me-1"></i>
-            Registrar Sesión de Nutrición
-        </a>
-
-        <a href="{% url 'register_neumologia' patient.id %}" class="btn btn-primary">
-            <i class="fa-solid fa-user-doctor me-1"></i>
-            Registrar Sesión de Neumología
-        </a>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light fw-bold"><i class="fa-solid fa-bed-pulse me-2 text-primary"></i>Polisomnografía Basal</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+                <thead class="table-light"><tr><th>Fecha</th><th>IAH</th><th>Severidad Apnea</th><th>IDO</th><th>Registrado Por</th></tr></thead>
+                <tbody>
+                    {% for basal in basales %}
+                    <tr><td>{{ basal.fecha_basal|date:"d/m/Y" }}</td><td>{{ basal.iah }}</td><td>{{ basal.severidad_apnea }}</td><td>{{ basal.ido }}</td><td>{{ basal.registrado_por }}</td></tr>
+                    {% empty %}<tr><td colspan="5" class="text-center py-3 text-muted">No hay registros de PSG Basal.</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- ================= Polisomnografia Basal ================= -->
-    <section class="section-block">
-
-        <!-- Icono anclado -->
-        <div class="section-icon">
-            <i class="fa-solid fa-bed-pulse"></i>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light fw-bold"><i class="fa-solid fa-bed-pulse me-2 text-primary"></i>Polisomnografía Titulación</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+                <thead class="table-light"><tr><th>Fecha</th><th>Tipo</th><th>Presión IPAP</th><th>Presión EPAP</th><th>Registrado por</th></tr></thead>
+                <tbody>
+                    {% for t in titulaciones %}
+                    <tr><td>{{ t.fecha_titulacion|date:"d/m/Y" }}</td><td>{{ t.tipo_titulacion }}</td><td>{{ t.presion_ipap }}</td><td>{{ t.presion_epap }}</td><td>{{ t.registrado_por }}</td></tr>
+                    {% empty %}<tr><td colspan="5" class="text-center py-3 text-muted">No hay registros de PSG Titulación.</td></tr>{% endfor %}
+                </tbody>
+            </table>
         </div>
+    </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="section-title">
-                Polisomnografía Basal
-            </h4>
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-light fw-bold"><i class="fa-solid fa-kit-medical me-2 text-primary"></i>Equipo Médico Inicio</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+                <thead class="table-light"><tr><th>Fecha</th><th>Talla máscara</th><th>Marca equipo</th><th>Serial</th><th>Modo</th><th>Registrado por</th></tr></thead>
+                <tbody>
+                    {% for equipo in equipos_medicos %}
+                    <tr><td>{{ equipo.created_at|date:"d/m/Y" }}</td><td>{{ equipo.talla_mascara }}</td><td>{{ equipo.marca_equipo }}</td><td>{{ equipo.serial_equipo }}</td><td>{{ equipo.modo_ventilatorio }}</td><td>{{ equipo.registrado_por }}</td></tr>
+                    {% empty %}<tr><td colspan="6" class="text-center py-3 text-muted">No hay registros de equipo médico.</td></tr>{% endfor %}
+                </tbody>
+            </table>
         </div>
+    </div>
 
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover table-striped mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Fecha</th>
-                            <th>IAH</th>
-                            <th>Severidad Apnea</th>
-                            <th>IDO</th>
-                            <th>Registrado Por</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for basal in basales %}
-                        <tr>
-                            <td>{{ basal.fecha_basal|date:"d/m/Y" }}</td>
-                            <td>{{ basal.iah }}</td>
-                            <td>{{ basal.severidad_apnea }}</td>
-                            <td>{{ basal.ido }}</td>
-                            <td>{{ basal.registrado_por }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-4 fst-italic">
-                                No hay registros de polisomnografía Basal.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+    <h2 class="h4 fw-bold mb-4 text-muted">EXÁMENES DEL PROGRAMA</h2>
+
+    <div class="card shadow-sm mb-5">
+        <div class="card-header text-dark fw-bold"><i class="fa-solid fa-lungs me-2 text-primary"></i>Adaptación</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small" style="min-width: 1000px;">
+                <thead class="table-light">
+                    <tr>
+                        <th>Fecha</th><th>% Uso diario</th><th>% días > 4h</th><th>% Horas uso diario</th><th>IAH basal</th><th>IAH residual</th><th>% Corrección</th><th>IPAP</th><th>EPAP</th><th>Freq. Resp.</th><th>Modo</th><th>Máscara</th><th>Tamaño</th><th>EtCO₂</th><th>Registrado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for monitoreo in monitoreos %}
+                    <tr>
+                        <td class="text-nowrap">{{ monitoreo.created_at|date:"d/m/Y" }}</td>
+                        <td>{{ monitoreo.uso_diario }}</td><td>{{ monitoreo.dias_uso_horas_4 }}</td><td>{{ monitoreo.horas_uso_diario }}</td>
+                        <td>{{ monitoreo.hipopnea_basal }}</td><td>{{ monitoreo.hipopnea_residual }}</td>
+                        <td>
+                            {% if monitoreo.porcentaje_correccion != None %}
+                                <span class="badge {% if monitoreo.porcentaje_correccion >= 90 %} bg-success {% elif monitoreo.porcentaje_correccion >= 50 %} bg-warning text-dark {% else %} bg-danger {% endif %}">
+                                    {{ monitoreo.porcentaje_correccion }}% {% if monitoreo.porcentaje_correccion < 0 %}<i class="fas fa-exclamation-triangle"></i>{% endif %}
+                                </span>
+                            {% else %}<span class="text-muted">Sin datos</span>{% endif %}
+                        </td>
+                        <td>{{ monitoreo.presion_ipap }}</td><td>{{ monitoreo.presion_epap|default:"-" }}</td>
+                        <td>{{ monitoreo.frecuencia_respiratoria|default:"-" }}</td><td>{{ monitoreo.get_modo_ventilatorio_display }}</td>
+                        <td>{{ monitoreo.get_mascara_cpap_display }}</td><td>{{ monitoreo.tamano_mascara }}</td><td>{{ monitoreo.etco2_promedio|default:"-" }}</td>
+                        <td>{{ monitoreo.registrado_por }}</td>
+                    </tr>
+                    {% empty %}<tr><td colspan="15" class="text-center py-4 text-muted">No hay registros de monitoreo.</td></tr>{% endfor %}
+                </tbody>
+            </table>
         </div>
+    </div>
 
-    </section>
-
-
-    <!-- ================= Polisomnografia Titulacion ================= -->
-    <section class="section-block">
-
-        <div class="section-icon">
-            <i class="fa-solid fa-bed-pulse"></i>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light fw-bold"><i class="fa-solid fa-brain me-2 text-info"></i>Psicología</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+                <thead class="table-light"><tr><th>Fecha</th><th>BDI (Depre)</th><th>BAI (Ansiedad)</th><th>Escala Atenas</th><th>Registrado por</th></tr></thead>
+                <tbody>
+                    {% for s in sesiones_psicologia %}
+                    <tr><td>{{ s.created_at|date:"d/m/Y" }}</td><td>{{ s.inventario_depre_beck }}</td><td>{{ s.inventario_ansiedad_beck }}</td><td>{{ s.escala_atenas }}</td><td>{{ s.registrado_por }}</td></tr>
+                    {% empty %}<tr><td colspan="5" class="text-center py-3 text-muted">No hay registros de psicología.</td></tr>{% endfor %}
+                </tbody>
+            </table>
         </div>
+    </div>
 
-        <h4 class="section-title">Polisomnografía Titulación</h4>
-
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover table-striped mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Tipo</th>
-                            <th>Presión IPAP</th>
-                            <th>Presión EPAP</th>
-                            <th>Registrado por</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for titulacion in titulaciones %}
-                        <tr>
-                            <td>{{ titulacion.fecha_titulacion|date:"d/m/Y" }}</td>
-                            <td>{{ titulacion.tipo_titulacion }}</td>
-                            <td>{{ titulacion.presion_ipap }}</td>
-                            <td>{{ titulacion.presion_epap }}</td>
-                            <td>{{ titulacion.registrado_por }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-4 fst-italic">
-                                No hay registros de polisomnografía de titulación.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light fw-bold"><i class="fa-solid fa-apple-whole me-2 text-success"></i>Nutrición</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+                <thead class="table-light"><tr><th>Fecha</th><th>Estado nutricional</th><th>Carbohidratos %</th><th>Rumiación</th><th>Cafeína</th><th>Registrado por</th></tr></thead>
+                <tbody>
+                    {% for s in sesiones_nutricion %}
+                    <tr><td>{{ s.created_at|date:"d/m/Y" }}</td><td>{{ s.get_estado_nutricional_display }}</td><td>{{ s.carbohidratos_pct }}</td><td>{{ s.get_rumiacion_display }}</td><td>{{ s.cafeina }}</td><td>{{ s.registrado_por }}</td></tr>
+                    {% empty %}<tr><td colspan="6" class="text-center py-3 text-muted">No hay registros de nutrición.</td></tr>{% endfor %}
+                </tbody>
+            </table>
         </div>
+    </div>
 
-    </section>
-
-    <!-- ================= Equipo Medico Inicio ================= -->
-    <section class="section-block">
-
-        <div class="section-icon">
-            <i class="fa-solid fa-kit-medical"></i>
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-light fw-bold"><i class="fa-solid fa-user-doctor me-2 text-danger"></i>Neumología</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+                <thead class="table-light"><tr><th>Fecha</th><th>Médico Tratante</th><th>Especialidad</th></tr></thead>
+                <tbody>
+                    {% for ne in sesiones_neumologia %}
+                    <tr><td>{{ ne.fecha_consulta|date:"d/m/Y" }}</td><td>{{ ne.medico_tratante }}</td><td>{{ ne.especialidad }}</td></tr>
+                    {% empty %}<tr><td colspan="3" class="text-center py-3 text-muted">No hay registros de neumología.</td></tr>{% endfor %}
+                </tbody>
+            </table>
         </div>
-
-        <h4 class="section-title">Equipo Médico Inicio</h4>
-
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover table-striped mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Talla máscara</th>
-                            <th>Marca equipo</th>
-                            <th>Serial</th>
-                            <th>Modo</th>
-                            <th>Registrado por</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for equipo in equipos_medicos %}
-                        <tr>
-                            <td>{{ equipo.created_at|date:"d/m/Y" }}</td>
-                            <td>{{ equipo.talla_mascara }}</td>
-                            <td>{{ equipo.marca_equipo }}</td>
-                            <td>{{ equipo.serial_equipo }}</td>
-                            <td>{{ equipo.modo_ventilatorio }}</td>
-                            <td>{{ equipo.registrado_por }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4 fst-italic">
-                                No hay registros de equipo médico.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </section>
-
-
-    <!-- ================= MONITOREO ================= -->
-    <section class="section-block">
-
-        <div class="section-icon">
-            <i class="fa-solid fa-lungs"></i>
-        </div>
-
-        <h4 class="section-title">Monitoreo Respiratorio</h4>
-
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover table-striped mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Fecha</th>
-                            <th>% Uso diario</th>
-                            <th>% días &gt; 4h</th>
-                            <th>Hipopnea basal</th>
-                            <th>Hipopnea residual</th>
-                            <th>IPAP</th>
-                            <th>EPAP</th>
-                            <th>Modo</th>
-                            <th>Máscara</th>
-                            <th>Tamaño</th>
-                            <th>EtCO₂</th>
-                            <th>Registrado por</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for monitoreo in monitoreos %}
-                        <tr>
-                            <td>{{ monitoreo.created_at|date:"d/m/Y" }}</td>
-                            <td>{{ monitoreo.uso_diario }}</td>
-                            <td>{{ monitoreo.dias_uso_horas }}</td>
-                            <td>{{ monitoreo.hipopnea_basal }}</td>
-                            <td>{{ monitoreo.hipopnea_residual }}</td>
-                            <td>{{ monitoreo.presion_ipap }}</td>
-                            <td>{{ monitoreo.presion_epap }}</td>
-                            <td>{{ monitoreo.get_modo_ventilatorio_display }}</td>
-                            <td>{{ monitoreo.get_mascara_cpap_display }}</td>
-                            <td>{{ monitoreo.tamano_mascara }}</td>
-                            <td>{{ monitoreo.etco2_promedio }}</td>
-                            <td>{{ monitoreo.registrado_por }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="12" class="text-center text-muted py-4 fst-italic">
-                                No hay registros de monitoreo respiratorio.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </section>
-
-
-    <!-- ================= PSICOLOGÍA ================= -->
-    <section class="section-block">
-
-        <div class="section-icon">
-            <i class="fa-solid fa-brain"></i>
-        </div>
-
-        <h4 class="section-title">Psicología</h4>
-
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover table-striped mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Fecha</th>
-                            <th>BDI</th>
-                            <th>BAI</th>
-                            <th>Escala Atenas</th>
-                            <th>Registrado por</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for sesion in sesiones_psicologia %}
-                        <tr>
-                            <td>{{ sesion.created_at|date:"d/m/Y" }}</td>
-                            <td>{{ sesion.inventario_depre_beck }}</td>
-                            <td>{{ sesion.inventario_ansiedad_beck }}</td>
-                            <td>{{ sesion.escala_atenas }}</td>
-                            <td>{{ sesion.registrado_por }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-4 fst-italic">
-                                No hay registros de psicología.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </section>
-
-
-    <!-- ================= NUTRICIÓN ================= -->
-    <section class="section-block">
-
-        <div class="section-icon">
-            <i class="fa-solid fa-apple-whole"></i>
-        </div>
-
-        <h4 class="section-title">Nutrición</h4>
-
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <table class="table table-hover table-striped mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Estado nutricional</th>
-                            <th>Carbohidratos %</th>
-                            <th>Rumiación</th>
-                            <th>Cafeína</th>
-                            <th>Registrado por</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for sesion in sesiones_nutricion %}
-                        <tr>
-                            <td>{{ sesion.created_at|date:"d/m/Y" }}</td>
-                            <td>{{ sesion.get_estado_nutricional_display }}</td>
-                            <td>{{ sesion.carbohidratos_pct }}</td>
-                            <td>{{ sesion.get_rumiacion_display }}</td>
-                            <td>{{ sesion.cafeina }}</td>
-                            <td>{{ sesion.registrado_por }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4 fst-italic">
-                                No hay registros de nutrición.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </section>
-
+    </div>
 
 </div>
-
 {% endblock content %}
 
 {% block script_extra %}

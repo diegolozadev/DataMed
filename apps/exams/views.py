@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from apps.exams.forms import MonitoreoForm, PsicologiaForm, NutricionForm, BasalForm, TitulacionForm, NeumologiaForm, EquipoMedicoForm
-from .models import Monitoreo, Psicologia, Nutricion, Neumologia, PolisomnografiaBasal, PolisomnografiaTitulacion, EquipoMedico, Ingreso
+from .models import Monitoreo, Psicologia, Nutricion, Neumologia, PolisomnografiaBasal, PolisomnografiaTitulacion, EquipoMedico, Neumologia
 from apps.patients.models import Patient
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -25,21 +25,27 @@ def patient_clinical(request, patient_id):
         basales = PolisomnografiaBasal.objects.filter(ingreso=ingreso_actual).order_by('-id') 
         titulaciones = PolisomnografiaTitulacion.objects.filter(ingreso=ingreso_actual).order_by('-id')
         equipos_medicos = EquipoMedico.objects.filter(ingreso=ingreso_actual).order_by('-id')
+        sesiones_neumologia = Neumologia.objects.filter(ingreso=ingreso_actual).order_by('-id')
+        ultima_cita = ingreso_actual.seguimientos.all().order_by('-created_at').first()
     else:
         # Si no hay ingreso activo, las listas se van vacías
         monitoreos = sesiones_psicologia = sesiones_nutricion = sesiones_neumologia = \
-        basales = titulaciones = equipos_medicos = []
+        basales = titulaciones = equipos_medicos =  sesiones_neumologia = []
+        ultima_cita = None
+        
 
     return render(request, 'exams/patient_clinical.html', {
         'patient': patient,
         'ingreso_actual': ingreso_actual,
+        'ultima_cita': ultima_cita,
         'monitoreos': monitoreos,
         'sesiones_psicologia': sesiones_psicologia,
         'sesiones_nutricion': sesiones_nutricion,
         'sesiones_neumologia': sesiones_neumologia,
         'basales': basales,
         'titulaciones': titulaciones,
-        'equipos_medicos': equipos_medicos
+        'equipos_medicos': equipos_medicos,
+        'sesiones_neumologia': sesiones_neumologia
     })
     
 

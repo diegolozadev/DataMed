@@ -103,6 +103,23 @@
     box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.15);
 }
 
+.section-block-first {
+    position: relative;
+    padding-left: 3.2rem;
+    margin-bottom: 3rem;
+}
+
+/* Línea vertical first */
+.section-block-first::before {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 38px;
+    width: 3px;
+    height: calc(100% - 38px);
+    background-color: #08206d; /* azul del sistema */
+    border-radius: 2px;
+}
 
 .section-block {
     position: relative;

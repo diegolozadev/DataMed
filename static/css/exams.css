@@ -16,13 +16,6 @@
     flex-direction: column;
 }
 
-/* Labels */
-.form-row-2 label {
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #495057;
-    margin-bottom: 0.35rem;
-}
 
 /* Inputs */
 .form-row-2 input,
@@ -33,13 +26,6 @@
     font-size: 0.9rem;
 }
 
-/* Focus */
-.form-row-2 input:focus,
-.form-row-2 select:focus,
-.form-row-2 textarea:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.1rem rgba(13, 110, 253, 0.15);
-}
 
 /* Errors */
 .error {

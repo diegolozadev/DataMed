@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (b > 0) {
                 const resultado = ((b - r) / b) * 100;
-                porcentajeOutput.value = resultado.toFixed(1) + "%";
+                porcentajeOutput.value = resultado.toFixed(1);
 
                 // Lógica de colores según el resultado
                 if (resultado < 0) {
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     porcentajeOutput.classList.add('text-danger');
                 }
             } else {
-                porcentajeOutput.value = "0%";
+                porcentajeOutput.value = "0";
             }
         }
 
