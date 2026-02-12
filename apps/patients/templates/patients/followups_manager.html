@@ -6,10 +6,22 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="row mb-4">
+    <div class="row mb-4 align-items-center">
+        <!-- Texto -->
         <div class="col-md-8">
-            <h2 class="fw-bold"><i class="fa-solid fa-layer-group text-primary me-2"></i>Historial de Seguimientos</h2>
-            <p class="text-muted">Administra los ciclos de atención y consulta el histórico de cada paciente.</p>
+            <h2 class="fw-bold">
+                <i class="fa-solid fa-layer-group text-primary me-2"></i>
+                Historial de Seguimientos
+            </h2>
+            <p class="text-muted mb-0">
+                Administra los ciclos de atención y consulta el histórico de cada paciente.
+            </p>
+        </div>
+
+        <!-- Logos a la derecha -->
+        <div class="col-md-4 d-flex justify-content-end align-items-center gap-3">
+            <img src="{% static 'img/logo_sueno.png' %}" height="100" alt="Clínica de Sueño">
+            <img src="{% static 'img/logotipo_ino.png' %}" height="100" alt="INO">
         </div>
     </div>
 

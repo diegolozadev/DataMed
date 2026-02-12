@@ -47,17 +47,22 @@ def patient_clinical(request, patient_id):
 @login_required
 def register_monitoreo(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
-    # Buscamos el ingreso activo
     ingreso_actual = patient.ingresos.filter(estado='ACTIVO').first()
+
+    # --- LÓGICA PARA RECUPERAR PSG BASAL ---
+    # Buscamos la PSG más reciente de este paciente
+    psg = PolisomnografiaBasal.objects.filter(ingreso=ingreso_actual).last()
+    
+    # Extraemos el valor si existe, si no, lo dejamos en 0
+    # Ajusta 'iah_total' por el nombre del campo en tu modelo PSG
+    valor_basal = psg.iah if psg else 0
+    # ---------------------------------------
 
     if request.method == 'POST':
         form = MonitoreoForm(request.POST)
         if form.is_valid():
             monitoreo = form.save(commit=False)
-            
-            # Vinculamos al ciclo activo para evitar el huérfano
             monitoreo.ingreso = ingreso_actual 
-            
             monitoreo.patient = patient
             monitoreo.registrado_por = request.user
             monitoreo.save()
@@ -65,13 +70,13 @@ def register_monitoreo(request, patient_id):
             messages.success(request, f'Monitoreo registrado para {patient.nombre} {patient.apellido} exitosamente ✅')
             return redirect('patient_clinical', patient_id=patient.id)
     else:
-        form = MonitoreoForm()
+        # Pre-llenamos el formulario con el dato de la PSG
+        form = MonitoreoForm(initial={'hipopnea_basal': valor_basal})
 
     return render(request, 'exams/register_monitoreo.html', {
         'patient': patient,
         'form': form
     })
-    
     
 # Vista para registrar datos de PSICOLOGIA
 @login_required

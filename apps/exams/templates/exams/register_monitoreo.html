@@ -25,37 +25,87 @@
         <div class="card shadow-sm border-0">
             <div class="card-body">
 
-                <form method="post" action="{% url 'register_monitoreo' patient.id %}" novalidate>
-                    {% csrf_token %}
+        <form method="post" action="{% url 'register_monitoreo' patient.id %}" novalidate>
+            {% csrf_token %}
 
-                    <div class="form-grid">
-                        {% for field in form %}
-                            <div class="form-row-2">
-                                <label for="{{ field.id_for_label }}" class="form-label">
-                                    {{ field.label }}
-                                </label>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.uso_diario.label }}</label>
+                    {{ form.uso_diario }}
+                    <div class="text-danger small">{{ form.uso_diario.errors }}</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.dias_uso_horas_4.label }}</label>
+                    {{ form.dias_uso_horas_4 }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.horas_uso_diario.label }}</label>
+                    {{ form.horas_uso_diario }}
+                </div>
+            </div>
 
-                                {{ field }}
-
-                                {% if field.errors %}
-                                    <div class="error">
-                                        {{ field.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.hipopnea_basal.label }}</label>
+                    <div class="input-group">
+                        {{ form.hipopnea_basal }}
+                        <span class="input-group-text bg-light text-muted" title="Dato traído de PSG Basal">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </span>
                     </div>
+                    <small class="text-muted">Valor recuperado de PSG basal inicial.</small>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.hipopnea_residual.label }}</label>
+                    {{ form.hipopnea_residual }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Porcentaje Corrección</label>
+                    <input type="text" id="id_porcentaje_correccion" class="form-control bg-light fw-bold" readonly placeholder="Calculando...">
+                </div>
+            </div>
 
-                    <div class="d-flex justify-content-end mt-4">
-                        <a href="{% url 'patient_clinical' patient.id %}" class="btn btn-secondary me-2">
-                            Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa-solid fa-floppy-disk me-1"></i>
-                            Guardar Monitoreo
-                        </button>
-                    </div>
-                </form>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label class="form-label">{{ form.modo_ventilatorio.label }}</label>
+                    {{ form.modo_ventilatorio }}
+                </div>
+                <div class="col-md-3" id="col_ipap"> 
+                    <label class="form-label">{{ form.presion_ipap.label }}</label>
+                    {{ form.presion_ipap }}
+                </div>
+                <div class="col-md-3" id="col_epap"> 
+                    <label class="form-label">{{ form.presion_epap.label }}</label>
+                    {{ form.presion_epap }}
+                </div>
+                <div class="col-md-3" id="col_frecuencia"> 
+                    <label class="form-label">{{ form.frecuencia_respiratoria.label }}</label>
+                    {{ form.frecuencia_respiratoria }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.mascara_cpap.label }}</label>
+                    {{ form.mascara_cpap }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.tamano_mascara.label }}</label>
+                    {{ form.tamano_mascara }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.etco2_promedio.label }}</label>
+                    {{ form.etco2_promedio }}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <a href="{% url 'patient_clinical' patient.id %}" class="btn btn-secondary me-2">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Monitoreo
+                </button>
+            </div>
+        </form>
 
             </div>
         </div>

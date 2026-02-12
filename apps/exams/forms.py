@@ -8,24 +8,28 @@ class MonitoreoForm(forms.ModelForm):
         exclude = ['patient', 'registrado_por', 'ingreso']
         labels = {
             'uso_diario': 'Porcentaje(%) Uso Diario',
-            'dias_uso_horas': 'Porcentaje(%) días uso > 4 horas',
-            'hipopnea_basal': 'Indice de apneas/hipopneas BASAL',
-            'hipopnea_residual': 'Indice de apneas/hipopneas RESIDUAL',
-            'presion_ipap': 'Presion Terapéutica IPAP',
-            'presion_epap': 'Presion Terapéutica EPAP',
+            'dias_uso_horas_4': 'Porcentaje(%) días uso > 4 horas',
+            'horas_uso_diario': 'Porcentaje(%) horas de uso diario',
+            'hipopnea_basal': 'Indice de apneas BASAL',
+            'hipopnea_residual': 'Indice de apneas RESIDUAL',
             'modo_ventilatorio': 'Modo Ventilatorio',
+            'presion_ipap': 'Presion IPAP',
+            'presion_epap': 'Presion EPAP',
+            'frecuencia_respiratoria': 'Frecuencia Respiratoria',
             'mascara_cpap': 'Máscara de CPAP',
             'tamano_mascara': 'Tamaño de Máscara',
             'etco2_promedio': 'EtCO2 Promedio',
         }
         widgets = {
             'uso_diario': forms.NumberInput(attrs={'class': 'form-control'}),
-            'dias_uso_horas': forms.NumberInput(attrs={'class': 'form-control'}),
-            'hipopnea_basal': forms.NumberInput(attrs={'class': 'form-control'}),
-            'hipopnea_residual': forms.NumberInput(attrs={'class': 'form-control'}),
+            'dias_uso_horas_4': forms.NumberInput(attrs={'class': 'form-control'}),
+            'horas_uso_diario': forms.NumberInput(attrs={'class': 'form-control'}),
             'modo_ventilatorio': forms.Select(attrs={'class': 'form-control'}),
+            'hipopnea_basal': forms.NumberInput(attrs={'class': 'form-control bg-light', 'readonly': 'readonly'}),
+            'hipopnea_residual': forms.NumberInput(attrs={'class': 'form-control'}),
             'presion_ipap': forms.NumberInput(attrs={'class': 'form-control'}),
             'presion_epap': forms.NumberInput(attrs={'class': 'form-control'}),
+            'frecuencia_respiratoria': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Respiraciones por minuto (rpm)'},),
             'mascara_cpap': forms.Select(attrs={'class': 'form-control'}),
             'tamano_mascara': forms.Select(attrs={'class': 'form-control'}),
             'etco2_promedio': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -38,8 +42,8 @@ class PsicologiaForm(forms.ModelForm):
         model = Psicologia
         exclude = ['patient', 'registrado_por', 'ingreso']
         labels = {
-            'inventario_depre_beck': 'Inventario de Depresión de Beck(BDI)',
-            'inventario_ansiedad_beck': 'Inventario de Ansiedad de Beck(BAI)',
+            'inventario_depre_beck': 'Depresión de Beck',
+            'inventario_ansiedad_beck': 'Ansiedad de Beck',
             'escala_atenas': 'Escala Atenas (1 a 10)',
         }
         widgets = {
@@ -76,10 +80,12 @@ class NeumologiaForm(forms.ModelForm):
         labels = {
             'fecha_consulta': 'Fecha de Consulta',
             'medico_tratante': 'Médico Tratante',
+            'especialidad': 'Especialidad'
         }
         widgets = {
             'fecha_consulta': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'medico_tratante': forms.TextInput(attrs={'class': 'form-control'}),
+            'especialidad': forms.TextInput(attrs={'class': 'form-control'})
         }   
     
         
@@ -90,9 +96,9 @@ class BasalForm(forms.ModelForm):
         exclude = ['patient', 'registrado_por', 'ingreso']
         labels = {
             'fecha_basal': 'Fecha de Estudio Basal',
-            'iah': 'Índice de Apneas/Hipopneas (IAH)',
+            'iah': 'Índice de Apneas (IAH)',
             'severidad_apnea': 'Severidad de Apneas',
-            'ido': 'Idoneidad CPAP',
+            'ido': 'IDO',
             'eficiencia': 'Eficiencia(%)'
         }
         widgets = {
@@ -114,6 +120,7 @@ class TitulacionForm(forms.ModelForm):
             'fecha_titulacion': 'Fecha de Estudio de Titulación',
             'presion_ipap': 'Presión IPAP en Titulación',
             'presion_epap': 'Presión EPAP en Titulación',
+            'frecuencia_respiratoria': 'Frecuencia Respiratoria',
             'talla_mascara': 'Talla Mascara',
             'tipo_mascara': 'Tipo Mascara'
         }
@@ -122,6 +129,7 @@ class TitulacionForm(forms.ModelForm):
             'fecha_titulacion': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'presion_ipap': forms.NumberInput(attrs={'class': 'form-control'}),
             'presion_epap': forms.NumberInput(attrs={'class': 'form-control'}),
+            'frecuencia_respiratoria': forms.NumberInput(attrs={'class': 'form-control'}),
             'talla_mascara': forms.Select(attrs={'class': 'form-control'}),
             'tipo_mascara': forms.Select(attrs={'class': 'form-control'}),
         }
@@ -134,6 +142,7 @@ class EquipoMedicoForm(forms.ModelForm):
         exclude = ['patient', 'registrado_por', 'ingreso']
         labels = {
             'tipo_mascara_eq_medico': 'Tipo de Mascara',
+            'referencia_mascara': 'Referencia Mascara',
             'talla_mascara': 'Talla de la Máscara',
             'marca_equipo': 'Marca del Equipo',
             'serial_equipo': 'Serial del Equipo',
@@ -141,7 +150,8 @@ class EquipoMedicoForm(forms.ModelForm):
             
         }
         widgets = {
-            'tipo_mascara_eq_medico': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo_mascara_eq_medico': forms.Select(attrs={'class': 'form-control'}),
+            'referencia_mascara': forms.TextInput(attrs={'class': 'form-control'}),
             'talla_mascara': forms.Select(attrs={'class': 'form-control'}),
             'marca_equipo': forms.Select(attrs={'class': 'form-control'}),
             'serial_equipo': forms.TextInput(attrs={'class': 'form-control'}),
