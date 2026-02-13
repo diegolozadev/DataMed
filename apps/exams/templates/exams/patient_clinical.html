@@ -106,7 +106,7 @@
         </div>
     </div>
 
-    <h2 class="h4 fw-bold mb-4 text-muted">EXÁMENES DE INGRESO</h2>
+    <h2 class="h4 fw-bold mb-4 text-muted">FASE DE INGRESO</h2>
 
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-bed-pulse me-2 text-primary"></i>Polisomnografía Basal</div>
@@ -150,7 +150,7 @@
         </div>
     </div>
 
-    <h2 class="h4 fw-bold mb-4 text-muted">EXÁMENES DEL PROGRAMA</h2>
+    <h2 class="h4 fw-bold mb-4 text-muted">SEGUIMIENTO DEL PROGRAMA</h2>
 
     <div class="card shadow-sm mb-5">
         <div class="card-header text-dark fw-bold"><i class="fa-solid fa-lungs me-2 text-primary"></i>Adaptación</div>
@@ -180,6 +180,47 @@
                         <td>{{ monitoreo.registrado_por }}</td>
                     </tr>
                     {% empty %}<tr><td colspan="15" class="text-center py-4 text-muted">No hay registros de monitoreo.</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <span class="fw-bold text-dark">
+                <i class="fa-solid fa-phone-volume me-2 text-primary"></i>Notas de Seguimiento y Contacto
+            </span>
+            <span class="badge text-dark">{{ seguimientos_adaptacion|length }} registros</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 150px;">Fecha</th>
+                        <th>Observaciones / Detalle del Contacto</th>
+                        <th style="width: 200px;">Registrado por</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for nota in seguimientos_adaptacion %}
+                    <tr>
+                        <td>
+                            {{ nota.created_at|date:"d/m/Y" }}
+                        </td>
+                        <td>
+                            {{ nota.observaciones|linebreaksbr }}
+                        </td>
+                        <td>
+                            {{ nota.registrado_por.username }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center py-4 text-muted fst-italic">
+                            No hay notas de contacto registradas para este ingreso.
+                        </td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

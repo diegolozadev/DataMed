@@ -1,11 +1,11 @@
 from django import forms
-from .models import Monitoreo, Psicologia, Nutricion, PolisomnografiaBasal, PolisomnografiaTitulacion, Neumologia, EquipoMedico
+from .models import Monitoreo, Psicologia, Nutricion, PolisomnografiaBasal, PolisomnografiaTitulacion, Neumologia, EquipoMedico, SeguimientoAdaptacion
 
 # formulario para registrar Monitoreo
 class MonitoreoForm(forms.ModelForm):
     class Meta:
         model = Monitoreo
-        exclude = ['patient', 'registrado_por', 'ingreso']
+        exclude = ['registrado_por', 'ingreso']
         labels = {
             'uso_diario': 'Porcentaje(%) Uso Diario',
             'dias_uso_horas_4': 'Porcentaje(%) días uso > 4 horas',
@@ -42,7 +42,7 @@ class MonitoreoForm(forms.ModelForm):
 class PsicologiaForm(forms.ModelForm):
     class Meta:
         model = Psicologia
-        exclude = ['patient', 'registrado_por', 'ingreso']
+        exclude = ['registrado_por', 'ingreso']
         labels = {
             'inventario_depre_beck': 'Depresión de Beck',
             'inventario_ansiedad_beck': 'Ansiedad de Beck',
@@ -59,7 +59,7 @@ class PsicologiaForm(forms.ModelForm):
 class NutricionForm(forms.ModelForm):
     class Meta:
         model = Nutricion
-        exclude = ['patient', 'registrado_por', 'ingreso']
+        exclude = ['registrado_por', 'ingreso']
         labels = {
             'estado_nutricional': 'Estado Nutricional',
             'carbohidratos_pct': 'Carbohidratos',
@@ -78,7 +78,7 @@ class NutricionForm(forms.ModelForm):
 class NeumologiaForm(forms.ModelForm):
     class Meta:
         model = Neumologia
-        exclude = ['patient', 'registrado_por', 'ingreso']
+        exclude = ['registrado_por', 'ingreso']
         labels = {
             'fecha_consulta': 'Fecha de Consulta',
             'medico_tratante': 'Médico Tratante',
@@ -95,7 +95,7 @@ class NeumologiaForm(forms.ModelForm):
 class BasalForm(forms.ModelForm):
     class Meta:
         model = PolisomnografiaBasal
-        exclude = ['patient', 'registrado_por', 'ingreso']
+        exclude = ['registrado_por', 'ingreso']
         labels = {
             'fecha_basal': 'Fecha de Estudio Basal',
             'iah': 'Índice de Apneas (IAH)',
@@ -116,7 +116,7 @@ class BasalForm(forms.ModelForm):
 class TitulacionForm(forms.ModelForm):
     class Meta:
         model = PolisomnografiaTitulacion
-        exclude = ['patient', 'registrado_por', 'ingreso']
+        exclude = ['registrado_por', 'ingreso']
         labels = {
             'tipo_titulacion': 'Tipo de Titulación',
             'fecha_titulacion': 'Fecha de Estudio de Titulación',
@@ -141,7 +141,7 @@ class TitulacionForm(forms.ModelForm):
 class EquipoMedicoForm(forms.ModelForm):
     class Meta:
         model = EquipoMedico
-        exclude = ['patient', 'registrado_por', 'ingreso']
+        exclude = ['registrado_por', 'ingreso']
         labels = {
             'tipo_mascara_eq_medico': 'Tipo de Mascara',
             'referencia_mascara': 'Referencia Mascara',
@@ -160,3 +160,22 @@ class EquipoMedicoForm(forms.ModelForm):
             'modo_ventilatorio': forms.Select(attrs={'class': 'form-control'}),
         }
 
+
+class SeguimientoAdaptacionForm(forms.ModelForm):
+    class Meta:
+        model = SeguimientoAdaptacion
+        exclude = ['registrado_por', 'ingreso'] 
+        
+        labels = {
+            'observaciones': 'Notas del Seguimiento / Contacto Telefónico',
+        }
+          
+        widgets = {
+            # Corregido: 'observaciones' en minúscula y Textarea para párrafos
+            'observaciones': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Escribe aquí los detalles del contacto con el paciente...',
+                'style': 'resize: none;'
+            }),
+        }

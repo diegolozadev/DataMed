@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from apps.exams.forms import MonitoreoForm, PsicologiaForm, NutricionForm, BasalForm, TitulacionForm, NeumologiaForm, EquipoMedicoForm
-from .models import Monitoreo, Psicologia, Nutricion, Neumologia, PolisomnografiaBasal, PolisomnografiaTitulacion, EquipoMedico, Neumologia
-from apps.patients.models import Patient
+from apps.exams.forms import MonitoreoForm, PsicologiaForm, NutricionForm, BasalForm, TitulacionForm, NeumologiaForm, EquipoMedicoForm, SeguimientoAdaptacionForm
+from .models import Monitoreo, Psicologia, Nutricion, Neumologia, PolisomnografiaBasal, PolisomnografiaTitulacion, EquipoMedico, Neumologia, SeguimientoAdaptacion
+from apps.patients.models import Patient, Ingreso
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -26,11 +26,12 @@ def patient_clinical(request, patient_id):
         titulaciones = PolisomnografiaTitulacion.objects.filter(ingreso=ingreso_actual).order_by('-id')
         equipos_medicos = EquipoMedico.objects.filter(ingreso=ingreso_actual).order_by('-id')
         sesiones_neumologia = Neumologia.objects.filter(ingreso=ingreso_actual).order_by('-id')
+        seguimientos_adaptacion = SeguimientoAdaptacion.objects.filter(ingreso=ingreso_actual).order_by('-id')
         ultima_cita = ingreso_actual.seguimientos.all().order_by('-created_at').first()
     else:
         # Si no hay ingreso activo, las listas se van vacías
         monitoreos = sesiones_psicologia = sesiones_nutricion = sesiones_neumologia = \
-        basales = titulaciones = equipos_medicos =  sesiones_neumologia = []
+        basales = titulaciones = equipos_medicos =  sesiones_neumologia = seguimientos_adaptacion = []
         ultima_cita = None
         
 
@@ -45,7 +46,8 @@ def patient_clinical(request, patient_id):
         'basales': basales,
         'titulaciones': titulaciones,
         'equipos_medicos': equipos_medicos,
-        'sesiones_neumologia': sesiones_neumologia
+        'sesiones_neumologia': sesiones_neumologia,
+        'seguimientos_adaptacion': seguimientos_adaptacion
     })
     
 
@@ -55,33 +57,46 @@ def register_monitoreo(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
     ingreso_actual = patient.ingresos.filter(estado='ACTIVO').first()
 
-    # --- LÓGICA PARA RECUPERAR PSG BASAL ---
-    # Buscamos la PSG más reciente de este paciente
+    # --- LÓGICA PSG BASAL ---
     psg = PolisomnografiaBasal.objects.filter(ingreso=ingreso_actual).last()
-    
-    # Extraemos el valor si existe, si no, lo dejamos en 0
-    # Ajusta 'iah_total' por el nombre del campo en tu modelo PSG
     valor_basal = psg.iah if psg else 0
-    # ---------------------------------------
+    # ------------------------
+
+    # Inicializamos ambos formularios para el GET
+    form = MonitoreoForm(initial={'hipopnea_basal': valor_basal})
+    seguimiento_form = SeguimientoAdaptacionForm()
+    active_tab = 'tecnico' # Por defecto abrimos la técnica
 
     if request.method == 'POST':
-        form = MonitoreoForm(request.POST)
-        if form.is_valid():
-            monitoreo = form.save(commit=False)
-            monitoreo.ingreso = ingreso_actual 
-            monitoreo.patient = patient
-            monitoreo.registrado_por = request.user
-            monitoreo.save()
-            
-            messages.success(request, f'Monitoreo registrado para {patient.nombre} {patient.apellido} exitosamente ✅')
-            return redirect('patient_clinical', patient_id=patient.id)
-    else:
-        # Pre-llenamos el formulario con el dato de la PSG
-        form = MonitoreoForm(initial={'hipopnea_basal': valor_basal})
+        # ¿Se envió el formulario de Monitoreo Técnico?
+        if 'btn_monitoreo' in request.POST:
+            form = MonitoreoForm(request.POST)
+            if form.is_valid():
+                monitoreo = form.save(commit=False)
+                monitoreo.ingreso = ingreso_actual 
+                monitoreo.registrado_por = request.user
+                monitoreo.save()
+                messages.success(request, f'Monitoreo técnico guardado ✅')
+                return redirect('patient_clinical', patient_id=patient.id)
+            active_tab = 'tecnico'
+
+        # ¿Se envió el formulario de Seguimiento/Contacto?
+        elif 'btn_contacto' in request.POST:
+            seguimiento_form = SeguimientoAdaptacionForm(request.POST)
+            if seguimiento_form.is_valid():
+                seguimiento = seguimiento_form.save(commit=False)
+                seguimiento.ingreso = ingreso_actual
+                seguimiento.registrado_por = request.user
+                seguimiento.save()
+                messages.success(request, f'Nota de contacto guardada ✅')
+                return redirect('patient_clinical', patient_id=patient.id)
+            active_tab = 'contacto' # Si hay error, que se quede en esta pestaña
 
     return render(request, 'exams/register_monitoreo.html', {
         'patient': patient,
-        'form': form
+        'form': form,
+        'seguimiento_form': seguimiento_form,
+        'active_tab': active_tab
     })
     
 # Vista para registrar datos de PSICOLOGIA
@@ -97,9 +112,6 @@ def register_psicologia(request, patient_id):
         if form.is_valid():
             # 2. commit=False evita que se guarde de inmediato y se dispare el signal
             exam = form.save(commit=False)
-            
-            # 3. Asignamos los campos que faltan
-            exam.paciente = patient
             exam.ingreso = ingreso_actual # Esto es lo que el Signal está pidiendo a gritos
             exam.registrado_por = request.user
             
@@ -126,12 +138,7 @@ def register_nutricion(request, patient_id):
         form = NutricionForm(request.POST)
         if form.is_valid():
             nutricion = form.save(commit=False)
-            
-            # 2. Asignamos el ingreso (esto arregla el historial y el Admin)
             nutricion.ingreso = ingreso_actual 
-            
-            # 3. Asignamos el resto de datos
-            nutricion.patient = patient
             nutricion.registrado_por = request.user
             
             nutricion.save()
@@ -158,7 +165,6 @@ def register_neumologia(request, patient_id):
         form = NeumologiaForm(request.POST)
         if form.is_valid():
             neumologia = form.save(commit=False)
-            neumologia.patient = patient
             neumologia.ingreso = ingreso_actual # <-- ASIGNAR INGRESO
             neumologia.registrado_por = request.user
             neumologia.save()
@@ -166,7 +172,10 @@ def register_neumologia(request, patient_id):
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = NeumologiaForm()
-    return render(request, 'exams/register_neumologia.html', {'patient': patient, 'form': form})
+    return render(request, 'exams/register_neumologia.html', {
+        'patient': patient, 
+        'form': form
+        })
 
 
 # vista para registarr datos de BASAL
@@ -179,7 +188,6 @@ def register_basal(request, patient_id):
         form = BasalForm(request.POST)
         if form.is_valid():
             basal = form.save(commit=False)
-            basal.patient = patient
             basal.ingreso = ingreso_actual # <-- ASIGNAR INGRESO
             basal.registrado_por = request.user
             basal.save()
@@ -187,8 +195,10 @@ def register_basal(request, patient_id):
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = BasalForm()
-    return render(request, 'exams/register_basal.html', {'patient': patient, 'form': form})
-
+    return render(request, 'exams/register_basal.html', {
+        'patient': patient, 
+        'form': form
+        })
 
 
 # vista para registarr datos de TITULACIÓN
@@ -201,7 +211,6 @@ def register_titulacion(request, patient_id):
         form = TitulacionForm(request.POST)
         if form.is_valid():
             titulacion = form.save(commit=False)
-            titulacion.patient = patient
             titulacion.ingreso = ingreso_actual # <-- ASIGNAR INGRESO
             titulacion.registrado_por = request.user
             titulacion.save()
@@ -209,7 +218,10 @@ def register_titulacion(request, patient_id):
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = TitulacionForm()
-    return render(request, 'exams/register_titulacion.html', {'patient': patient, 'form': form})
+    return render(request, 'exams/register_titulacion.html', {
+        'patient': patient, 
+        'form': form
+        })
 
 
 # vista para registarr datos de EQUIPO MÉDICO
@@ -222,7 +234,6 @@ def register_equipo_medico(request, patient_id):
         form = EquipoMedicoForm(request.POST)
         if form.is_valid():
             equipo_medico = form.save(commit=False)
-            equipo_medico.patient = patient
             equipo_medico.ingreso = ingreso_actual # <-- ASIGNAR INGRESO
             equipo_medico.registrado_por = request.user
             equipo_medico.save()
@@ -230,4 +241,7 @@ def register_equipo_medico(request, patient_id):
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = EquipoMedicoForm()
-    return render(request, 'exams/register_equipo_medico.html', {'patient': patient, 'form': form})
+    return render(request, 'exams/register_equipo_medico.html', {
+        'patient': patient, 
+        'form': form})
+

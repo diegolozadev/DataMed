@@ -385,3 +385,34 @@ class Seguimiento(models.Model):
     
     def __str__(self):
         return f"{self.ingreso.paciente.nombre} - Seguimiento: {self.tipo_servicio} - {self.fecha_atencion}"
+    
+
+class SeguimientoAdaptacion(models.Model):
+    
+    # Relación con el modelo Ingreso
+    ingreso = models.ForeignKey(
+        Ingreso,
+        on_delete=models.CASCADE,
+        related_name='seguimientos_adaptaciones',
+        blank=True,
+        null=True
+    )
+    
+    # Relación con el modelo User
+    registrado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='seguimientos_adaptaciones_registrados'
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    observaciones = models.TextField(verbose_name="Observaciones de Seguimiento")
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Seguimiento de Adaptación"
+
+    def __str__(self):
+        return f"Seguimiento {self.created_at.strftime('%d/%m/%Y')} - {self.ingreso.paciente}"
