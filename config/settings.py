@@ -32,7 +32,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Django buscará estas variables en el sistema operativo (Railway)
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-dev-key')
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'datamed-k68i.onrender.com',
