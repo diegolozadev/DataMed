@@ -35,15 +35,16 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-dev-key')
 DEBUG = False
 
 ALLOWED_HOSTS = [
+    'datamed-k68i.onrender.com',
+    'www.datamed-k68i.onrender.com',
     'localhost',
     '127.0.0.1',
-    'datamed.up.railway.app',
 ]
 
 # CSRF Trusted Origins for deployment
 CSRF_TRUSTED_ORIGINS = [
-    'http://*',
-    'https://datamed.up.railway.app'
+    'https://datamed-k68i.onrender.com',
+    "https://www.datamed-k68i.onrender.com"
 ]
 
 # Application definition
