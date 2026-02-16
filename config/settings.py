@@ -164,3 +164,6 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Esto evita que el 500 ocurra si falta un archivo estático menor
+WHITENOISE_MANIFEST_STRICT = False

@@ -11,7 +11,7 @@ python manage.py collectstatic --no-input
 # Apply any outstanding database migrations
 python manage.py migrate
 
-python manage.py createsuperuser --noinput || true
+# python manage.py createsuperuser --noinput || true
 
 echo "LOG: Verificando estado de la base de datos..."
 python manage.py showmigrations
