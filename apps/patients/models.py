@@ -18,47 +18,68 @@ class Patient(models.Model):
         ("AMAZONAS", "Amazonas"),
         ("ANTIOQUIA", "Antioquia"),
         ("ARAUCA", "Arauca"),
-        ("ATLÁNTICO", "Atlántico"),
-        ("BOLÍVAR", "Bolívar"),
-        ("BOYACÁ", "Boyacá"),
+        ("ATLANTICO", "Atlántico"),
+        ("BOLIVAR", "Bolívar"),
+        ("BOYACA", "Boyacá"),
         ("CALDAS", "Caldas"),
-        ("CAQUETÁ", "Caquetá"),
+        ("CAQUETA", "Caquetá"),
         ("CASANARE", "Casanare"),
         ("CAUCA", "Cauca"),
         ("CESAR", "Cesar"),
-        ("CHOCÓ", "Chocó"),
-        ("CÓRDOBA", "Córdoba"),
+        ("CHOCO", "Chocó"),
+        ("CORDOBA", "Córdoba"),
         ("CUNDINAMARCA", "Cundinamarca"),
-        ("GUAINÍA", "Guainía"),
+        ("GUAINIA", "Guainía"),
         ("GUAVIARE", "Guaviare"),
         ("HUILA", "Huila"),
-        ("LA GUAJIRA", "La Guajira"),
+        ("LA_GUAJIRA", "La Guajira"),
         ("MAGDALENA", "Magdalena"),
         ("META", "Meta"),
-        ("NARIÑO", "Nariño"),
-        ("NORTE DE SANTANDER", "Norte de Santander"),
+        ("NARINO", "Nariño"),
+        ("NORTE_SANTANDER", "Norte de Santander"),
         ("PUTUMAYO", "Putumayo"),
-        ("QUINDÍO", "Quindío"),
+        ("QUINDIO", "Quindío"),
         ("RISARALDA", "Risaralda"),
-        ("SAN ANDRÉS Y PROVIDENCIA", "San Andrés y Providencia"),
+        ("SAN_ANDRES", "San Andrés y Providencia"),
         ("SANTANDER", "Santander"),
         ("SUCRE", "Sucre"),
         ("TOLIMA", "Tolima"),
-        ("VALLE DEL CAUCA", "Valle del Cauca"),
-        ("VAUPÉS", "Vaupés"),
+        ("VALLE_CAUCA", "Valle del Cauca"),
+        ("VAUPES", "Vaupés"),
         ("VICHADA", "Vichada"),
     ]
-    
+        
     CIUDADES = [
+        # Santander
         ("BUCARAMANGA", "Bucaramanga"),
-        ("MEDELLÍN", "Medellín"),
-        ("BOGOTÁ", "Bogotá"),
-        ("CARTAGENA", "Cartagena"),
+        ("FLORIDABLANCA", "Floridablanca"),
+        ("GIRON", "Girón"),
+        ("PIEDECUESTA", "Piedecuesta"),
+        ("BARRANCABERMEJA", "Barrancabermeja"),
+        # Principales
+        ("BOGOTA", "Bogotá, D.C."),
+        ("MEDELLIN", "Medellín"),
+        ("CALI", "Cali"),
         ("BARRANQUILLA", "Barranquilla"),
-        ("MEDELLÍN", "Medellín"),
-        ("BOGOTÁ", "Bogotá"),
         ("CARTAGENA", "Cartagena"),
-        ("BARRANQUILLA", "Barranquilla"),
+        ("CUCUTA", "Cúcuta"),
+        ("IBAGUE", "Ibagué"),
+        ("PEREIRA", "Pereira"),
+        ("MANIZALES", "Manizales"),
+        ("NEIVA", "Neiva"),
+        ("VILLAVICENCIO", "Villavicencio"),
+        ("PASTO", "Pasto"),
+        ("MONTERIA", "Montería"),
+        ("VALLEDUPAR", "Valledupar"),
+        ("SANTA MARTA", "Santa Marta"),
+        ("POPAYAN", "Popayán"),
+        ("TUNJA", "Tunja"),
+        ("QUIBDO", "Quibdó"),
+        ("RIOHACHA", "Riohacha"),
+        ("FLORENCIA", "Florencia"),
+        ("YOPAL", "Yopal"),
+        ("SINCELEJO", "Sincelejo"),
+        ("ARMENIA", "Armenia"),
     ]
     
     ENTIDADES_SALUD = [
@@ -74,7 +95,7 @@ class Patient(models.Model):
     documento = models.CharField(max_length=20, unique=True)
     fecha_nacimiento = models.DateField()
     genero = models.CharField(max_length=10, choices=[("M", "Masculino"), ("F", "Femenino"), ("O", "Otro")])
-    departamento = models.CharField(max_length=100, choices=DEPARTAMENTOS)
+    departamento = models.CharField(max_length=100, choices=DEPARTAMENTOS, default='SANTANDER')
     ciudad = models.CharField(max_length=100, choices=CIUDADES)
     zona = models.CharField(max_length=10, choices=[("URBANA", "Urbana"), ("RURAL", "Rural")])
     telefono = models.CharField(max_length=20)
@@ -101,6 +122,16 @@ class Patient(models.Model):
     def esta_activo(self):
         # Devuelve True si hay algún ingreso activo
         return self.ingresos.filter(estado='ACTIVO').exists()
+    
+    @property
+    def edad(self):
+        today = date.today()
+        # Calculamos la diferencia de años
+        age = today.year - self.fecha_nacimiento.year
+        # Ajustamos si aún no ha pasado el mes/día del cumpleaños este año
+        if (today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day):
+            age -= 1
+        return age
     
     def __str__(self):
         return f"{self.nombre} {self.apellido} - {self.documento}"

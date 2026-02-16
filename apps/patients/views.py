@@ -11,20 +11,35 @@ from django.contrib.auth.decorators import login_required
 # Esta vista muestra la lista de pacientes
 @login_required
 def patients_list(request):
-    # Filtramos pacientes que tengan al menos un ingreso con estado 'ACTIVO'
-    # Usamos el related_name 'ingresos' (o el que definiste en la ForeignKey)
-    patients = Patient.objects.filter(ingresos__estado='ACTIVO').prefetch_related('ingresos').distinct()
+    query = request.GET.get('query_search', '')
+    mes_filtro = request.GET.get('mes_filtro', '')
     
-    query = request.GET.get("query_search")
+    # 1. Filtro base: Solo pacientes que tengan al menos un ingreso con estado 'ACTIVO'
+    # Usamos __estado para entrar a la tabla relacionada Ingreso
+    patients = Patient.objects.filter(ingresos__estado='ACTIVO').distinct()
     
+    # 2. Filtro por nombre o documento (sobre los que ya sabemos que están activos)
     if query:
         patients = patients.filter(
-            Q(documento__icontains=query) | Q(nombre__icontains=query)
+            Q(nombre__icontains=query) | 
+            Q(apellido__icontains=query) | 
+            Q(documento__icontains=query)
         )
-    
+
+    # 3. Filtro por la property "mes_capita"
+    if mes_filtro:
+        filtered_patients = []
+        for p in patients:
+            # Aquí usamos tu property ingreso_activo que busca el que dice 'ACTIVO'
+            ingreso = p.ingreso_activo 
+            if ingreso and str(ingreso.mes_capita) == str(mes_filtro):
+                filtered_patients.append(p)
+        patients = filtered_patients
+
     return render(request, 'patients/patients_list.html', {
         'patients': patients,
-        'query': query
+        'rango_meses': range(1, 19),
+        'query': query,
     })
 
 # Esta vista es para crear pacientes

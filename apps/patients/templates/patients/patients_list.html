@@ -16,20 +16,50 @@
         </a>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <form method="get" class="search-form d-flex align-items-center gap-2">
-            <div class="search-input-wrapper">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input
-                    type="text"
-                    name="query_search"
-                    class="search-input"
-                    placeholder="Buscar por documento o nombre"
-                    value="{{ query|default_if_none:'' }}"
-                >
-            </div>
-            <button type="submit" class="btn btn-primary">Buscar</button>
-        </form>
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body p-3">
+            <form method="get" class="row g-2 align-items-center">
+                
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fa-solid fa-magnifying-glass text-muted" style="font-size: 0.85rem;"></i>
+                        </span>
+                        <input
+                            type="text"
+                            name="query_search"
+                            class="form-control border-start-0 ps-0"
+                            placeholder="Buscar por documento o nombre..."
+                            value="{{ query|default_if_none:'' }}"
+                        >
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <select name="mes_filtro" class="form-select form-select-sm border-primary-subtle" onchange="this.form.submit()">
+                        <option value="">Todos los Meses</option>
+                        {% for mes in rango_meses %}
+                            <option value="{{ mes }}" {% if request.GET.mes_filtro == mes|stringformat:"i" %}selected{% endif %}>
+                                Mes Cápita {{ mes }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3 d-flex gap-1">
+                    <button type="submit" class="btn btn-sm btn-primary flex-grow-1">
+                        <i class="fa-solid fa-filter me-1"></i> Filtrar
+                    </button>
+                    
+                    {% if request.GET.query_search or request.GET.mes_filtro %}
+                        <a href="{% url 'patients_list' %}" class="btn btn-sm btn-outline-secondary" title="Limpiar filtros">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </a>
+                    {% endif %}
+                </div>
+
+            </form>
+        </div>
     </div>
 
     <div class="card shadow-sm border-0">
@@ -55,7 +85,7 @@
                                 <small class="text-muted">{{ patient.programa }}</small>
                             </td>
                             <td>{{ patient.documento }}</td>
-                            <td>{{ patient.fecha_nacimiento|date:"d/m/Y" }}</td>
+                            <td>{{ patient.edad }} años - {{ patient.fecha_nacimiento|date:"d/m/Y" }}</td>
                             <td>
                                 {% with g=patient.genero.upper %}
                                     {% if g == 'M' %}
@@ -68,23 +98,24 @@
                                 {% endwith %}
                             </td>
                             
-                            {# ACCESO A LA DATA RELACIONADA (TABLA INGRESO) #}
+                            {# Celda de Fecha de Ingreso #}
                             <td>
-                                {% with ingreso=patient.ingresos.all.last %}
-                                    {{ ingreso.fecha_inicio|date:"d/m/Y"|default:"--" }}
-                                {% endwith %}
+                                {{ patient.ingreso_activo.fecha_inicio|date:"d/m/Y"|default:"--" }}
                             </td>
-                            
+
+                            {# Celda de Mes Cápita #}
                             <td>
-                                <span class="badge outline-info text-dark border">
-                                {% with ingreso=patient.ingresos.all.last %}
-                                    {{ ingreso.mes_capita }}
-                                {% endwith %}
-                                </span>
+                                {% if patient.ingreso_activo %}
+                                    <span class="badge {% if patient.ingreso_activo.mes_capita <= 6 %}bg-primary{% elif patient.ingreso_activo.mes_capita <= 12 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        Mes {{ patient.ingreso_activo.mes_capita }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">--</span>
+                                {% endif %}
                             </td>
 
                             <td>
-                                <span class="badge bg-success">Activo</span>
+                                <span class="badge bg-success">{{ patient.ingreso_activo.estado }}</span>
                             </td>
 
                             <td class="text-end">
