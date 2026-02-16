@@ -12,3 +12,12 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 
 python manage.py createsuperuser --noinput || true
+
+echo "LOG: Verificando estado de la base de datos..."
+python manage.py showmigrations
+
+echo "LOG: Intentando migrar..."
+python manage.py migrate --noinput
+
+echo "LOG: Verificando si las tablas se crearon..."
+python manage.py inspectdb | head -n 20
