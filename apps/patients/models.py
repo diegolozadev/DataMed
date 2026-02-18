@@ -56,6 +56,16 @@ class Patient(models.Model):
         ("GIRON", "Girón"),
         ("PIEDECUESTA", "Piedecuesta"),
         ("BARRANCABERMEJA", "Barrancabermeja"),
+        ("LOS_SANTOS", "Los Santos"),
+        ("PUENTE_NACIONAL", "Puente Nacional"),
+        ("ZAPATOCA", "Zapatoca"),
+        ("SAN_GIL", "San Gil"),
+        ("CURITI", "Curití"),
+        ("PLAYON", "Playón"),
+        ("PUERTO_WILCHES", "Puerto Wilches"),
+        ("MALAGA", "Málaga"),
+        ("SABANA_DE_TORRES", "Sabana de Torres"),
+        ("SOCORRO", "Socorro"),
         # Principales
         ("BOGOTA", "Bogotá, D.C."),
         ("MEDELLIN", "Medellín"),
@@ -80,6 +90,8 @@ class Patient(models.Model):
         ("YOPAL", "Yopal"),
         ("SINCELEJO", "Sincelejo"),
         ("ARMENIA", "Armenia"),
+        ("SAN MARTIN", "San Martín"),
+        ("YONDO", "Yondó"),
     ]
     
     ENTIDADES_SALUD = [

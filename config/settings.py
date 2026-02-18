@@ -32,7 +32,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Django buscará estas variables en el sistema operativo (Railway)
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-dev-key')
-DEBUG = False
+DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = [
     'datamed-k68i.onrender.com',
@@ -51,6 +51,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic', # To serve static files in production
+    'import_export',
     'apps.users',
     'apps.exams',
     'apps.dashboard',
@@ -65,13 +66,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # To serve static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # To serve static files in production
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -100,13 +101,22 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 
-DATABASES = {
+if not DEBUG:
+    # ESTO CORRE EN RENDER (porque DEBUG es False)
+    DATABASES = {
         'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default='postgresql://postgres:postgres@localhost:5432/mysite',
-        conn_max_age=600
-    )
-}
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+        )
+    }
+else:
+    # ESTO CORRE EN TU PC (porque DEBUG es True)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': Path(BASE_DIR) / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
