@@ -54,7 +54,14 @@
                             <i class="fa-solid fa-floppy-disk me-1"></i>
                             Guardar registro
                         </button>
+
                     </div>
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.errors }}
+                    </div>
+                    {% endif %}
+                    
                 </form>
 
             </div>

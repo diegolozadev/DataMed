@@ -126,10 +126,10 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-bed-pulse me-2 text-primary"></i>Polisomnografía Titulación</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>Tipo</th><th>Presión IPAP</th><th>Presión EPAP</th><th>Registrado por</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>Tipo</th><th>Presión IPAP</th><th>Presión EPAP</th><th>Freq. Resp</th><th>Registrado por</th></tr></thead>
                 <tbody>
                     {% for t in titulaciones %}
-                    <tr><td>{{ t.fecha_titulacion|date:"d/m/Y" }}</td><td>{{ t.tipo_titulacion }}</td><td>{{ t.presion_ipap }}</td><td>{{ t.presion_epap }}</td><td>{{ t.registrado_por }}</td></tr>
+                    <tr><td>{{ t.fecha_titulacion|date:"d/m/Y" }}</td><td>{{ t.tipo_titulacion }}</td><td>{{ t.presion_ipap }}</td><td>{{ t.presion_epap|default:"-" }}</td><td>{{ t.frecuencia_respiratoria|default:"-" }}</td><td>{{ t.registrado_por }}</td></tr>
                     {% empty %}<tr><td colspan="5" class="text-center py-3 text-muted">No hay registros de PSG Titulación.</td></tr>{% endfor %}
                 </tbody>
             </table>

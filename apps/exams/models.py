@@ -274,8 +274,8 @@ class PolisomnografiaTitulacion(models.Model):
     
     fecha_titulacion = models.DateField()
     presion_ipap = models.DecimalField(max_digits=5, decimal_places=2)
-    presion_epap = models.DecimalField(max_digits=5, decimal_places=2)
-    frecuencia_respiratoria = models.IntegerField(help_text="Respiraciones por minuto (rpm)")
+    presion_epap = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    frecuencia_respiratoria = models.IntegerField(help_text="Respiraciones por minuto (rpm)", blank=True, null=True)
     talla_mascara = models.CharField(choices=TALLAS_MASCARAS, max_length=20, default='No especificado')
     tipo_mascara = models.CharField(choices=TIPOS_MASCARAS, max_length=20, default='No especificado')
     

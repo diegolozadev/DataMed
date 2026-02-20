@@ -9,7 +9,7 @@ class MonitoreoForm(forms.ModelForm):
         labels = {
             'uso_diario': 'Porcentaje(%) Uso Diario',
             'dias_uso_horas_4': 'Porcentaje(%) días uso > 4 horas',
-            'horas_uso_diario': 'Porcentaje(%) horas de uso diario',
+            'horas_uso_diario': 'Horas de uso diario',
             'hipopnea_basal': 'Indice de apneas BASAL',
             'hipopnea_residual': 'Indice de apneas RESIDUAL',
             'porcentaje_correccion': 'Porcentaje de corrección',
@@ -160,7 +160,7 @@ class EquipoMedicoForm(forms.ModelForm):
             'modo_ventilatorio': forms.Select(attrs={'class': 'form-control'}),
         }
 
-
+# formulario para registrar notas de seguimiento (adaptación)
 class SeguimientoAdaptacionForm(forms.ModelForm):
     class Meta:
         model = SeguimientoAdaptacion

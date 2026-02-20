@@ -4,6 +4,7 @@ from .models import Monitoreo, Psicologia, Nutricion, Neumologia, Polisomnografi
 from apps.patients.models import Patient, Ingreso
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils.safestring import mark_safe
 
 # Create your views here.
 
@@ -76,7 +77,7 @@ def register_monitoreo(request, patient_id):
                 monitoreo.ingreso = ingreso_actual 
                 monitoreo.registrado_por = request.user
                 monitoreo.save()
-                messages.success(request, f'Monitoreo técnico guardado ✅')
+                messages.success(request, mark_safe(f'<i class="fa-solid fa-circle-check"></i> Adaptación registrada para {patient.nombre} exitosamente'))
                 return redirect('patient_clinical', patient_id=patient.id)
             active_tab = 'tecnico'
 
@@ -88,7 +89,7 @@ def register_monitoreo(request, patient_id):
                 seguimiento.ingreso = ingreso_actual
                 seguimiento.registrado_por = request.user
                 seguimiento.save()
-                messages.success(request, f'Nota de contacto guardada ✅')
+                messages.success(request, mark_safe(f'<i class="fa-solid fa-circle-check"></i> Nota de contacto registrada para {patient.nombre} exitosamente'))
                 return redirect('patient_clinical', patient_id=patient.id)
             active_tab = 'contacto' # Si hay error, que se quede en esta pestaña
 
@@ -118,7 +119,7 @@ def register_psicologia(request, patient_id):
             # 4. Ahora sí, guardamos y el Signal funcionará feliz
             exam.save() 
             
-            messages.success(request, "Examen de psicología registrado.")
+            messages.success(request, mark_safe(f'<i class="fa-solid fa-circle-check"></i> Consulta de psicología registrada para {patient.nombre} exitosamente'))
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = PsicologiaForm()
@@ -143,7 +144,7 @@ def register_nutricion(request, patient_id):
             
             nutricion.save()
             
-            messages.success(request, f'Sesión de nutrición registrada para {patient.nombre} exitosamente ✅')
+            messages.success(request, mark_safe(f'<i class="fa-solid fa-circle-check"></i> Consulta de nutrición registrada para {patient.nombre} exitosamente'))
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = NutricionForm()
@@ -168,7 +169,7 @@ def register_neumologia(request, patient_id):
             neumologia.ingreso = ingreso_actual # <-- ASIGNAR INGRESO
             neumologia.registrado_por = request.user
             neumologia.save()
-            messages.success(request, f'Consulta de Neumología registrada para {patient.nombre} exitosamente ✅')
+            messages.success(request, mark_safe(f'<i class="fa-solid fa-circle-check"></i> Consulta de Neumología registrada para {patient.nombre} exitosamente'))
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = NeumologiaForm()
@@ -191,7 +192,7 @@ def register_basal(request, patient_id):
             basal.ingreso = ingreso_actual # <-- ASIGNAR INGRESO
             basal.registrado_por = request.user
             basal.save()
-            messages.success(request, f'Polisomnografía Basal registrada para {patient.nombre} exitosamente ✅')
+            messages.success(request, mark_safe(f'<i class="fa-solid fa-circle-check"></i> Polisomnografía Basal registrada para {patient.nombre} exitosamente'))
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = BasalForm()
@@ -208,20 +209,23 @@ def register_titulacion(request, patient_id):
     ingreso_actual = patient.ingresos.filter(estado='ACTIVO').first()
 
     if request.method == 'POST':
-        form = TitulacionForm(request.POST)
+        form = TitulacionForm(request.POST) # <-- Definimos form aquí para el POST
         if form.is_valid():
             titulacion = form.save(commit=False)
-            titulacion.ingreso = ingreso_actual # <-- ASIGNAR INGRESO
+            titulacion.ingreso = ingreso_actual
             titulacion.registrado_por = request.user
             titulacion.save()
-            messages.success(request, f'Polisomnografía Titulación registrada para {patient.nombre} exitosamente ✅')
+            messages.success(request, mark_safe(f'<i class="fa-solid fa-circle-check"></i> Polisomnografía Titulación registrada para {patient.nombre} exitosamente'))
             return redirect('patient_clinical', patient_id=patient.id)
     else:
-        form = TitulacionForm()
+        form = TitulacionForm() # <-- Definimos form aquí para el GET
+
+    # Al dejar el render AQUÍ (fuera del else), si el form falla, 
+    # se recarga la página mostrando los mensajes de "campo obligatorio".
     return render(request, 'exams/register_titulacion.html', {
         'patient': patient, 
         'form': form
-        })
+    })
 
 
 # vista para registarr datos de EQUIPO MÉDICO
@@ -237,7 +241,7 @@ def register_equipo_medico(request, patient_id):
             equipo_medico.ingreso = ingreso_actual # <-- ASIGNAR INGRESO
             equipo_medico.registrado_por = request.user
             equipo_medico.save()
-            messages.success(request, f'Equipo Médico registrado para {patient.nombre} exitosamente ✅')
+            messages.success(request, mark_safe(f'<i class="fa-solid fa-circle-check"></i> Equipo Médico registrado para {patient.nombre} exitosamente'))
             return redirect('patient_clinical', patient_id=patient.id)
     else:
         form = EquipoMedicoForm()
