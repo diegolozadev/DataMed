@@ -5,20 +5,19 @@ from .forms import PatientForm
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 # Create your views here.
-
-# Esta vista muestra la lista de pacientes
+# Esta vista muestra la lista de pacientes con filtros de búsqueda y paginación
 @login_required
 def patients_list(request):
     query = request.GET.get('query_search', '')
     mes_filtro = request.GET.get('mes_filtro', '')
     
-    # 1. Filtro base: Solo pacientes que tengan al menos un ingreso con estado 'ACTIVO'
-    # Usamos __estado para entrar a la tabla relacionada Ingreso
+    # 1. Filtro base
     patients = Patient.objects.filter(ingresos__estado='ACTIVO').distinct()
     
-    # 2. Filtro por nombre o documento (sobre los que ya sabemos que están activos)
+    # 2. Filtro por nombre o documento
     if query:
         patients = patients.filter(
             Q(nombre__icontains=query) | 
@@ -26,21 +25,29 @@ def patients_list(request):
             Q(documento__icontains=query)
         )
 
-    # 3. Filtro por la property "mes_capita"
+    # 3. Filtro por la property "mes_capita" (Esto lo convierte en lista)
     if mes_filtro:
         filtered_patients = []
         for p in patients:
-            # Aquí usamos tu property ingreso_activo que busca el que dice 'ACTIVO'
             ingreso = p.ingreso_activo 
             if ingreso and str(ingreso.mes_capita) == str(mes_filtro):
                 filtered_patients.append(p)
         patients = filtered_patients
 
+    # --- NUEVA LÓGICA DE PAGINACIÓN ---
+    # Usamos 10 por página para que Render no sufra
+    paginator = Paginator(patients, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    # ----------------------------------
+
     return render(request, 'patients/patients_list.html', {
-        'patients': patients,
+        'page_obj': page_obj,  # <--- Pasamos page_obj en lugar de patients
         'rango_meses': range(1, 19),
         'query': query,
+        'mes_filtro': mes_filtro, # añadido para que el select se mantenga
     })
+
 
 # Esta vista es para crear pacientes
 @login_required
@@ -111,19 +118,28 @@ def patient_detail(request, patient_id):
 # Esta vista muestra los ingresos de un paciente específico
 def followups_manager(request):
     query = request.GET.get("query_search")
-    # Traemos a todos (activos e inactivos)
-    patients = Patient.objects.all().prefetch_related('ingresos')
+    
+    # Optimizamos con prefetch_related para no hacer consultas N+1 en el template
+    # Ordenamos por nombre para que la paginación sea consistente
+    patients_list = Patient.objects.all().prefetch_related('ingresos').order_by('nombre')
     
     if query:
-        patients = patients.filter(
-            Q(documento__icontains=query) | Q(nombre__icontains=query)
+        patients_list = patients_list.filter(
+            Q(documento__icontains=query) | Q(nombre__icontains=query) | Q(apellido__icontains=query)
         )
     
+    # --- Configuración del Paginador ---
+    # 15 o 20 pacientes por página es un buen número para esta gestión
+    paginator = Paginator(patients_list, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     return render(request, 'patients/followups_manager.html', {
-        'patients': patients,
-        'query': query
+        'page_obj': page_obj, # Cambiamos 'patients' por 'page_obj'
+        'query': query,
+        'total_count': patients_list.count() # Útil para mostrar "X resultados encontrados"
     })
-  
+    
     
 # Esta vista es para cambiar el estado del paciente
 @login_required
