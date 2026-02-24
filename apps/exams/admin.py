@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Monitoreo, Psicologia, Nutricion, Neumologia, Seguimiento, PolisomnografiaBasal, PolisomnografiaTitulacion
+from .models import Monitoreo, Psicologia, Nutricion, Neumologia, Seguimiento, PolisomnografiaBasal, PolisomnografiaTitulacion, EquipoMedico
 
 # Register your models here.
 
@@ -130,6 +130,28 @@ class SeguimientosAdmin(admin.ModelAdmin):
         'tipo_servicio',
         'registrado_por',
         'created_at',
+    )
+
+    search_fields = (
+        'patient__name',
+        'registrado_por__username',
+    )
+
+    ordering = ('-created_at',)
+    date_hierarchy = 'created_at'
+    
+@admin.register(EquipoMedico)
+class EquipoMedicoAdmin(admin.ModelAdmin):
+    list_display = (
+        'ingreso',
+        'tipo_mascara_eq_medico',
+        'referencia_mascara',
+        'talla_mascara',
+        'marca_equipo',
+        'serial_equipo',
+        'modo_ventilatorio',
+        'created_at',
+        'registrado_por',
     )
 
     search_fields = (

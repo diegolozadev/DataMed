@@ -9,6 +9,11 @@ from django.core.paginator import Paginator
 # Create your views here.
 @login_required
 def dashboard(request):
+    
+    """
+    Vista para el dashboard del sistema. Muestra estadísticas clave sobre los pacientes activos, el último ingreso registrado, y una lista de pacientes sin seguimiento reciente. Además, incluye una gráfica de distribución por mes capita.
+    
+    """    
     hoy = timezone.now().date()
     limite = hoy - timezone.timedelta(days=15)
     

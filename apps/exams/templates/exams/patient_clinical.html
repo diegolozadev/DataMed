@@ -112,10 +112,10 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-bed-pulse me-2 text-primary"></i>Polisomnografía Basal</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>IAH</th><th>Severidad Apnea</th><th>IDO</th><th>Registrado Por</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>IAH</th><th>Severidad Apnea</th><th>IDO</th><th>Eficiencia</th><th>Registrado Por</th></tr></thead>
                 <tbody>
                     {% for basal in basales %}
-                    <tr><td>{{ basal.fecha_basal|date:"d/m/Y" }}</td><td>{{ basal.iah }}</td><td>{{ basal.severidad_apnea }}</td><td>{{ basal.ido }}</td><td>{{ basal.registrado_por }}</td></tr>
+                    <tr><td>{{ basal.fecha_basal|date:"d/m/Y" }}</td><td>{{ basal.iah }}</td><td>{{ basal.severidad_apnea }}</td><td>{{ basal.ido }}</td><td>{{ basal.eficiencia }}</td><td>{{ basal.registrado_por }}</td></tr>
                     {% empty %}<tr><td colspan="5" class="text-center py-3 text-muted">No hay registros de PSG Basal.</td></tr>{% endfor %}
                 </tbody>
             </table>
@@ -126,10 +126,10 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-bed-pulse me-2 text-primary"></i>Polisomnografía Titulación</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>Tipo</th><th>Presión IPAP</th><th>Presión EPAP</th><th>Freq. Resp</th><th>Registrado por</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>Tipo</th><th>Presión IPAP</th><th>Presión EPAP</th><th>Freq. Resp</th><th>Talla Mascara</th><th>Tipo Mascara</th><th>Registrado por</th></tr></thead>
                 <tbody>
                     {% for t in titulaciones %}
-                    <tr><td>{{ t.fecha_titulacion|date:"d/m/Y" }}</td><td>{{ t.tipo_titulacion }}</td><td>{{ t.presion_ipap }}</td><td>{{ t.presion_epap|default:"-" }}</td><td>{{ t.frecuencia_respiratoria|default:"-" }}</td><td>{{ t.registrado_por }}</td></tr>
+                    <tr><td>{{ t.fecha_titulacion|date:"d/m/Y" }}</td><td>{{ t.tipo_titulacion }}</td><td>{{ t.presion_ipap }}</td><td>{{ t.presion_epap|default:"-" }}</td><td>{{ t.frecuencia_respiratoria|default:"-" }}</td><td>{{ t.talla_mascara }}</td><td>{{ t.tipo_mascara }}</td><td>{{ t.registrado_por }}</td></tr>
                     {% empty %}<tr><td colspan="5" class="text-center py-3 text-muted">No hay registros de PSG Titulación.</td></tr>{% endfor %}
                 </tbody>
             </table>
@@ -140,10 +140,10 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-kit-medical me-2 text-primary"></i>Equipo Médico Inicio</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>Talla máscara</th><th>Marca equipo</th><th>Serial</th><th>Modo</th><th>Registrado por</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>Tipo máscara</th><th>Referencia máscara</th><th>Talla máscara</th><th>Marca equipo</th><th>Serial</th><th>Modo</th><th>Registrado por</th></tr></thead>
                 <tbody>
                     {% for equipo in equipos_medicos %}
-                    <tr><td>{{ equipo.created_at|date:"d/m/Y" }}</td><td>{{ equipo.talla_mascara }}</td><td>{{ equipo.marca_equipo }}</td><td>{{ equipo.serial_equipo }}</td><td>{{ equipo.modo_ventilatorio }}</td><td>{{ equipo.registrado_por }}</td></tr>
+                    <tr><td>{{ equipo.created_at|date:"d/m/Y" }}</td><td>{{ equipo.tipo_mascara_eq_medico }}</td><td>{{ equipo.referencia_mascara }}</td><td>{{ equipo.talla_mascara }}</td><td>{{ equipo.marca_equipo }}</td><td>{{ equipo.serial_equipo }}</td><td>{{ equipo.modo_ventilatorio }}</td><td>{{ equipo.registrado_por }}</td></tr>
                     {% empty %}<tr><td colspan="6" class="text-center py-3 text-muted">No hay registros de equipo médico.</td></tr>{% endfor %}
                 </tbody>
             </table>

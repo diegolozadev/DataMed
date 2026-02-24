@@ -11,6 +11,15 @@ from django.core.paginator import Paginator
 # Esta vista muestra la lista de pacientes con filtros de búsqueda y paginación
 @login_required
 def patients_list(request):
+    """
+    Vista para mostrar la lista de pacientes con filtros de búsqueda y paginación.
+    Permite filtrar por nombre, apellido, documento y mes de capitación.
+    
+    Además, se implementa paginación para manejar grandes cantidades de datos y evitar que Render se caiga. Se muestran 10 pacientes por página y se mantiene el estado de los filtros al navegar entre páginas.
+    
+    Se agrega un filtro base para mostrar solo pacientes con ingresos activos, y luego se aplican los filtros adicionales según la consulta del usuario. El filtro de mes capita se maneja a través de una iteración manual para evitar problemas con la propiedad calculada en el modelo.
+    
+    """
     query = request.GET.get('query_search', '')
     mes_filtro = request.GET.get('mes_filtro', '')
     
@@ -52,6 +61,9 @@ def patients_list(request):
 # Esta vista es para crear pacientes
 @login_required
 def create_patient(request):
+    """
+    Vista para crear un nuevo paciente. Al crear el paciente, también se crea automáticamente un nuevo ingreso con estado "ACTIVO" y la fecha de inicio que el usuario haya ingresado en el formulario. Si el usuario no ingresa una fecha, se asigna la fecha actual por defecto.
+    """
     if request.method == 'POST':
         form = PatientForm(request.POST)
         if form.is_valid():
@@ -62,7 +74,6 @@ def create_patient(request):
             
             # Si por algún motivo la fecha viene vacía, usamos la de hoy
             if not fecha_ingreso:
-                from django.utils import timezone
                 fecha_ingreso = timezone.now().date()
             
             # Creación limpia del Ingreso
@@ -84,6 +95,11 @@ def create_patient(request):
 # Esta vista muestra los detalles de un paciente específico
 @login_required
 def patient_detail(request, patient_id):
+    
+    """
+    Vista para mostrar los detalles de un paciente específico. Permite editar los datos del paciente y actualizar la fecha de inicio del ingreso activo si el usuario la modifica en el formulario.
+    """
+    
     patient = get_object_or_404(Patient, id=patient_id)
     ingreso_actual = patient.ingresos.filter(estado='ACTIVO').first()
     
@@ -117,6 +133,12 @@ def patient_detail(request, patient_id):
     
 # Esta vista muestra los ingresos de un paciente específico
 def followups_manager(request):
+    
+    """"
+    Vista para mostrar los ingresos de un paciente específico. Permite filtrar por nombre, apellido o documento del paciente. Además, se implementa paginación para manejar grandes cantidades de datos y evitar que Render se caiga.
+    
+    """
+    
     query = request.GET.get("query_search")
     
     # Optimizamos con prefetch_related para no hacer consultas N+1 en el template
@@ -144,6 +166,13 @@ def followups_manager(request):
 # Esta vista es para cambiar el estado del paciente
 @login_required
 def change_status_entry(request, entry_id, new_status):
+    
+    """
+    Vista para cambiar el estado de un ingreso específico. Si el nuevo estado es "TERMINADO", se requiere que el usuario ingrese la fecha de terminación y el motivo del cambio de estado. Estos datos se capturan a través de un formulario en la plantilla y se guardan en el modelo Ingreso. Después de actualizar el estado, se muestra un mensaje de éxito y se redirige al usuario a la vista de seguimiento de pacientes.
+    
+    """
+    
+    
     ingreso = get_object_or_404(Ingreso, id=entry_id)
     
     if request.method == 'POST' and new_status == 'TERMINADO':
@@ -161,6 +190,13 @@ def change_status_entry(request, entry_id, new_status):
 # Esta vista es para crear un nuevo ingreso
 @login_required
 def create_new_entry(request, patient_id):
+    
+    """
+    Vista para crear un nuevo ingreso para un paciente específico. Antes de crear un nuevo ingreso, se verifica si el paciente tiene algún ingreso activo o suspendido. Si es así, se muestra un mensaje de error indicando que no se puede iniciar un nuevo ciclo hasta que el proceso pendiente esté terminado. Si no hay procesos pendientes, se crea un nuevo ingreso con el estado "ACTIVO" y la fecha de inicio proporcionada por el usuario en el formulario. Después de crear el nuevo ingreso, se muestra un mensaje de éxito y se redirige al usuario a la vista de seguimiento de pacientes.
+    
+    """
+    
+    
     # 1. Identificamos al paciente
     patient = get_object_or_404(Patient, id=patient_id)
     

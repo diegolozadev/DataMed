@@ -11,6 +11,12 @@ from django.utils.safestring import mark_safe
 # Vista para ver la historia clinica de cada paciente
 @login_required
 def patient_clinical(request, patient_id):
+    
+    """
+    Esta vista es el corazón de la aplicación, donde se muestra toda la información clínica del paciente.
+    Para evitar confusiones, esta vista SOLO muestra los datos relacionados al ingreso ACTIVO del paciente. Esto es clave para que, al iniciar un nuevo ciclo (Mes 1), no se mezclen los datos del ciclo anterior con el nuevo. De esta forma, mantenemos la claridad y la organización de la información clínica a lo largo del tiempo, permitiendo a los usuarios enfocarse en el ciclo actual sin distracciones de datos anteriores.
+    """
+    
     patient = get_object_or_404(Patient, id=patient_id)
     
     # 1. Buscamos ÚNICAMENTE el ingreso que está activo ahora
@@ -55,6 +61,16 @@ def patient_clinical(request, patient_id):
 # Vista para registrar datos de MONITOREO
 @login_required
 def register_monitoreo(request, patient_id):
+    
+    """
+    Esta vista es un poco especial porque maneja DOS formularios en la misma página: el formulario principal de Monitoreo Técnico y un formulario secundario para registrar notas de Seguimiento/Contacto. Para evitar confusiones, se ha implementado una lógica que determina cuál formulario se está enviando y se mantiene la pestaña activa correspondiente, mejorando así la experiencia del usuario al registrar ambos tipos de información sin perder el contexto.
+    
+    Además, al igual que en la vista de historia clínica, esta vista también se enfoca exclusivamente en el ingreso ACTIVO del paciente. Esto garantiza que los datos registrados estén correctamente asociados al ciclo actual del paciente, evitando mezclas con ciclos anteriores y manteniendo la claridad en la información clínica.
+    
+    Además, se ha incluido una lógica para obtener el valor de IAH de la última polisomnografía basal registrada, que se muestra como referencia en el formulario de Monitoreo Técnico. Esto proporciona a los usuarios un contexto adicional al registrar los datos de monitoreo, permitiéndoles comparar fácilmente con el valor basal del paciente.
+    """
+    
+    
     patient = get_object_or_404(Patient, id=patient_id)
     ingreso_actual = patient.ingresos.filter(estado='ACTIVO').first()
 
@@ -100,9 +116,15 @@ def register_monitoreo(request, patient_id):
         'active_tab': active_tab
     })
     
+    
 # Vista para registrar datos de PSICOLOGIA
 @login_required
 def register_psicologia(request, patient_id):
+    
+    """
+    Esta vista es para registrar las sesiones de psicología de cada paciente. Al igual que las otras vistas de registro, se enfoca exclusivamente en el ingreso ACTIVO del paciente para garantizar que los datos estén correctamente asociados al ciclo actual. Además, se ha implementado una lógica clara para manejar el formulario de psicología, asegurando que los datos se guarden correctamente y que el usuario reciba retroalimentación inmediata sobre el éxito del registro.
+    """
+    
     patient = get_object_or_404(Patient, id=patient_id)
     
     # 1. Buscamos el ingreso activo del paciente
@@ -130,6 +152,12 @@ def register_psicologia(request, patient_id):
 # Vista para registrar datos de NUTRICIÓN
 @login_required
 def register_nutricion(request, patient_id):
+    
+    """
+    Esta vista es para registrar las sesiones de nutrición de cada paciente. Al igual que las otras vistas de registro, se enfoca exclusivamente en el ingreso ACTIVO del paciente para garantizar que los datos estén correctamente asociados al ciclo actual. Además, se ha implementado una lógica clara para manejar el formulario de nutrición, asegurando que los datos se guarden correctamente y que el usuario reciba retroalimentación inmediata sobre el éxito del registro.
+    
+    """
+    
     patient = get_object_or_404(Patient, id=patient_id)
     
     # 1. Buscamos el ingreso activo (OBLIGATORIO para que no sea huérfano)
@@ -159,6 +187,12 @@ def register_nutricion(request, patient_id):
 # vista para registarr datos de NEUMOLOGÍA
 @login_required
 def register_neumologia(request, patient_id):
+    
+    """
+    Esta vista es para registrar las sesiones de neumología de cada paciente. Al igual que las otras vistas de registro, se enfoca exclusivamente en el ingreso ACTIVO del paciente para garantizar que los datos estén correctamente asociados al ciclo actual. Además, se ha implementado una lógica clara para manejar el formulario de neumología, asegurando que los datos se guarden correctamente y que el usuario reciba retroalimentación inmediata sobre el éxito del registro.
+    
+    """
+    
     patient = get_object_or_404(Patient, id=patient_id)
     ingreso_actual = patient.ingresos.filter(estado='ACTIVO').first() # <-- BUSCAR INGRESO
 
@@ -182,6 +216,12 @@ def register_neumologia(request, patient_id):
 # vista para registarr datos de BASAL
 @login_required
 def register_basal(request, patient_id):
+    
+    """
+    Esta vista es para registrar las polisomnografías basales de cada paciente. Al igual que las otras vistas de registro, se enfoca exclusivamente en el ingreso ACTIVO del paciente para garantizar que los datos estén correctamente asociados al ciclo actual. Además, se ha implementado una lógica clara para manejar el formulario de basal, asegurando que los datos se guarden correctamente y que el usuario reciba retroalimentación inmediata sobre el éxito del registro.
+    
+    """
+    
     patient = get_object_or_404(Patient, id=patient_id)
     ingreso_actual = patient.ingresos.filter(estado='ACTIVO').first()
 
@@ -205,6 +245,10 @@ def register_basal(request, patient_id):
 # vista para registarr datos de TITULACIÓN
 @login_required
 def register_titulacion(request, patient_id):
+    """
+    Esta vista es para registrar las polisomnografías de titulación de cada paciente. Al igual que las otras vistas de registro, se enfoca exclusivamente en el ingreso ACTIVO del paciente para garantizar que los datos estén correctamente asociados al ciclo actual. Además, se ha implementado una lógica clara para manejar el formulario de titulación, asegurando que los datos se guarden correctamente y que el usuario reciba retroalimentación inmediata sobre el éxito del registro.
+    
+    """
     patient = get_object_or_404(Patient, id=patient_id)
     ingreso_actual = patient.ingresos.filter(estado='ACTIVO').first()
 
@@ -231,6 +275,12 @@ def register_titulacion(request, patient_id):
 # vista para registarr datos de EQUIPO MÉDICO
 @login_required
 def register_equipo_medico(request, patient_id):
+    
+    """
+    Esta vista es para registrar el equipo médico de cada paciente. Al igual que las otras vistas de registro, se enfoca exclusivamente en el ingreso ACTIVO del paciente para garantizar que los datos estén correctamente asociados al ciclo actual. Además, se ha implementado una lógica clara para manejar el formulario de equipo médico, asegurando que los datos se guarden correctamente y que el usuario reciba retroalimentación inmediata sobre el éxito del registro.
+    
+    """
+    
     patient = get_object_or_404(Patient, id=patient_id)
     ingreso_actual = patient.ingresos.filter(estado='ACTIVO').first()
 
