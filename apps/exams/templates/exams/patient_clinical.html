@@ -116,7 +116,7 @@
                 <tbody>
                     {% for basal in basales %}
                     <tr><td>{{ basal.fecha_basal|date:"d/m/Y" }}</td><td>{{ basal.iah }}</td><td>{{ basal.severidad_apnea }}</td><td>{{ basal.ido }}</td><td>{{ basal.eficiencia }}</td><td>{{ basal.registrado_por }}</td></tr>
-                    {% empty %}<tr><td colspan="5" class="text-center py-3 text-muted">No hay registros de PSG Basal.</td></tr>{% endfor %}
+                    {% empty %}<tr><td colspan="6" class="text-center py-3 text-muted">No hay registros de PSG Basal.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>
@@ -130,7 +130,7 @@
                 <tbody>
                     {% for t in titulaciones %}
                     <tr><td>{{ t.fecha_titulacion|date:"d/m/Y" }}</td><td>{{ t.tipo_titulacion }}</td><td>{{ t.presion_ipap }}</td><td>{{ t.presion_epap|default:"-" }}</td><td>{{ t.frecuencia_respiratoria|default:"-" }}</td><td>{{ t.talla_mascara }}</td><td>{{ t.tipo_mascara }}</td><td>{{ t.registrado_por }}</td></tr>
-                    {% empty %}<tr><td colspan="5" class="text-center py-3 text-muted">No hay registros de PSG Titulación.</td></tr>{% endfor %}
+                    {% empty %}<tr><td colspan="8" class="text-center py-3 text-muted">No hay registros de PSG Titulación.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>

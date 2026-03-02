@@ -132,6 +132,7 @@ def patient_detail(request, patient_id):
     
     
 # Esta vista muestra los ingresos de un paciente específico
+@login_required
 def followups_manager(request):
     
     """"
