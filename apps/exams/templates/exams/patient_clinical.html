@@ -144,7 +144,7 @@
                 <tbody>
                     {% for equipo in equipos_medicos %}
                     <tr><td>{{ equipo.created_at|date:"d/m/Y" }}</td><td>{{ equipo.tipo_mascara_eq_medico }}</td><td>{{ equipo.referencia_mascara }}</td><td>{{ equipo.talla_mascara }}</td><td>{{ equipo.marca_equipo }}</td><td>{{ equipo.serial_equipo }}</td><td>{{ equipo.modo_ventilatorio }}</td><td>{{ equipo.registrado_por }}</td></tr>
-                    {% empty %}<tr><td colspan="6" class="text-center py-3 text-muted">No hay registros de equipo médico.</td></tr>{% endfor %}
+                    {% empty %}<tr><td colspan="8" class="text-center py-3 text-muted">No hay registros de equipo médico.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>
