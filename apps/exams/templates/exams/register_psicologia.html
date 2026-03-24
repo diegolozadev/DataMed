@@ -61,4 +61,32 @@
         </div>
 
     </div>
+
+    <script>
+        // Esperamos a que todo el HTML esté cargado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Django por defecto le pone "id_" antes del nombre del campo en el modelo
+            const campoCalidad = document.querySelector('#id_calidad');
+            const campoCantidad = document.querySelector('#id_cantidad');
+            const campoTotal = document.querySelector('#id_total');
+
+            function actualizarSuma() {
+                // Tomamos los valores, si están vacíos usamos 0
+                const v1 = parseInt(campoCalidad.value) || 0;
+                const v2 = parseInt(campoCantidad.value) || 0;
+                
+                // Escribimos el resultado en el campo "Total" que es readonly
+                if (campoTotal) {
+                    campoTotal.value = v1 + v2;
+                }
+            }
+
+            // Si los campos existen, escuchamos cada vez que el usuario escriba (input)
+            if (campoCalidad && campoCantidad) {
+                campoCalidad.addEventListener('input', actualizarSuma);
+                campoCantidad.addEventListener('input', actualizarSuma);
+            }
+        });
+    </script>
+
 {% endblock content %}

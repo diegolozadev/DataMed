@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from apps.patients.models import Patient, Ingreso
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
@@ -87,13 +88,25 @@ class Psicologia(models.Model):
     
     inventario_depre_beck = models.IntegerField()
     inventario_ansiedad_beck = models.IntegerField()
-    escala_atenas = models.IntegerField()
-    
+    calidad = models.IntegerField(validators=[
+        MinValueValidator(1),
+        MaxValueValidator(20)
+    ])
+    cantidad = models.IntegerField(validators=[
+        MinValueValidator(1),
+        MaxValueValidator(20)
+    ])
+    total = models.IntegerField(default=0)
     
     created_at = models.DateTimeField(auto_now_add=True)
     
+    # Sobreescribimos el método save para que sume solito antes de guardar
+    def save(self, *args, **kwargs):
+        self.total = self.calidad + self.cantidad
+        super().save(*args, **kwargs)
+    
     def __str__(self):
-        return f"{self.ingreso.paciente.nombre} - {self.escala_atenas} - {self.created_at.date()}"
+        return f"{self.ingreso.paciente.nombre} - Total: {self.total} - {self.created_at.date()}"
 
 
 

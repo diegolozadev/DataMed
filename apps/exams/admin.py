@@ -38,7 +38,9 @@ class PsicologiaAdmin(admin.ModelAdmin):
         'ingreso',
         'inventario_depre_beck',
         'inventario_ansiedad_beck',
-        'escala_atenas',
+        'calidad',
+        'cantidad',
+        'total',
         'registrado_por',
         'created_at',
     )

@@ -46,12 +46,16 @@ class PsicologiaForm(forms.ModelForm):
         labels = {
             'inventario_depre_beck': 'Depresión de Beck',
             'inventario_ansiedad_beck': 'Ansiedad de Beck',
-            'escala_atenas': 'Escala Atenas (1 a 10)',
+            'calidad': 'Calidad',
+            'cantidad': 'Cantidad',
+            'total': 'Total',
         }
         widgets = {
             'inventario_depre_beck': forms.NumberInput(attrs={'class': 'form-control'}),
             'inventario_ansiedad_beck': forms.NumberInput(attrs={'class': 'form-control'}),
-            'escala_atenas': forms.NumberInput(attrs={'class': 'form-control'}),
+            'calidad': forms.NumberInput(attrs={'class': 'form-control'}),
+            'cantidad': forms.NumberInput(attrs={'class': 'form-control'}),
+            'total': forms.NumberInput(attrs={'readonly': 'readonly', 'class': 'form-control bg-light'}),
         }
         
         
