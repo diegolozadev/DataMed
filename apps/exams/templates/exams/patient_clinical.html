@@ -230,11 +230,11 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-brain me-2 text-info"></i>Psicología</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>BDI (Depre)</th><th>BAI (Ansiedad)</th><th>Escala Atenas</th><th>Registrado por</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>Depresión Beck</th><th>Ansiedad Beck</th><th>Calidad</th><th>Cantidad</th><th>Total</th><th>Registrado por</th></tr></thead>
                 <tbody>
                     {% for s in sesiones_psicologia %}
-                    <tr><td>{{ s.created_at|date:"d/m/Y" }}</td><td>{{ s.inventario_depre_beck }}</td><td>{{ s.inventario_ansiedad_beck }}</td><td>{{ s.escala_atenas }}</td><td>{{ s.registrado_por }}</td></tr>
-                    {% empty %}<tr><td colspan="5" class="text-center py-3 text-muted">No hay registros de psicología.</td></tr>{% endfor %}
+                    <tr><td>{{ s.created_at|date:"d/m/Y" }}</td><td>{{ s.inventario_depre_beck }}</td><td>{{ s.inventario_ansiedad_beck }}</td><td>{{ s.calidad }}</td><td>{{ s.cantidad }}</td><td>{{ s.total }}</td><td>{{ s.registrado_por }}</td></tr>
+                    {% empty %}<tr><td colspan="7" class="text-center py-3 text-muted">No hay registros de psicología.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>
