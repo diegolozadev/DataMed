@@ -124,8 +124,10 @@
                         <td>{{ basal.eficiencia }}</td>
                         <td>{{ basal.registrado_por }}</td>
                         <td class="text-nowrap">
+                            {% if request.user.is_staff %}
                             <a href="{% url 'edit_exam' 'basal' basal.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
                             <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'basal' basal.id %}" data-name="{{ basal }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}<tr><td colspan="7" class="text-center py-3 text-muted">No hay registros de PSG Basal.</td></tr>{% endfor %}
@@ -151,8 +153,10 @@
                         <td>{{ t.tipo_mascara }}</td>
                         <td>{{ t.registrado_por }}</td>
                         <td class="text-nowrap">
+                            {% if request.user.is_staff %}
                             <a href="{% url 'edit_exam' 'titulacion' t.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
                             <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'titulacion' t.id %}" data-name="{{ t }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}<tr><td colspan="9" class="text-center py-3 text-muted">No hay registros de PSG Titulación.</td></tr>{% endfor %}
@@ -178,8 +182,10 @@
                         <td>{{ equipo.modo_ventilatorio }}</td>
                         <td>{{ equipo.registrado_por }}</td>
                         <td class="text-nowrap">
+                            {% if request.user.is_staff %}
                             <a href="{% url 'edit_exam' 'equipo_medico' equipo.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
                             <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'equipo_medico' equipo.id %}" data-name="{{ equipo }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}<tr><td colspan="9" class="text-center py-3 text-muted">No hay registros de equipo médico.</td></tr>{% endfor %}
@@ -217,8 +223,10 @@
                         <td>{{ monitoreo.get_mascara_cpap_display }}</td><td>{{ monitoreo.tamano_mascara }}</td><td>{{ monitoreo.etco2_promedio|default:"-" }}</td>
                         <td>{{ monitoreo.registrado_por }}</td>
                         <td class="text-nowrap">
+                            {% if request.user.is_staff %}
                             <a href="{% url 'edit_exam' 'monitoreo' monitoreo.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
                             <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'monitoreo' monitoreo.id %}" data-name="{{ monitoreo }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}<tr><td colspan="16" class="text-center py-4 text-muted">No hay registros de monitoreo.</td></tr>{% endfor %}
@@ -257,8 +265,10 @@
                             {{ nota.registrado_por.username }}
                         </td>
                         <td class="text-nowrap">
+                            {% if request.user.is_staff %}
                             <a href="{% url 'edit_exam' 'seguimiento_adaptacion' nota.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
                             <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'seguimiento_adaptacion' nota.id %}" data-name="{{ nota }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}
@@ -289,8 +299,10 @@
                         <td>{{ s.total }}</td>
                         <td>{{ s.registrado_por }}</td>
                         <td class="text-nowrap">
+                            {% if request.user.is_staff %}
                             <a href="{% url 'edit_exam' 'psicologia' s.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
                             <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'psicologia' s.id %}" data-name="{{ s }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}<tr><td colspan="8" class="text-center py-3 text-muted">No hay registros de psicología.</td></tr>{% endfor %}
@@ -314,8 +326,10 @@
                         <td>{{ s.cafeina }}</td>
                         <td>{{ s.registrado_por }}</td>
                         <td class="text-nowrap">
+                            {% if request.user.is_staff %}
                             <a href="{% url 'edit_exam' 'nutricion' s.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
                             <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'nutricion' s.id %}" data-name="{{ s }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}<tr><td colspan="7" class="text-center py-3 text-muted">No hay registros de nutrición.</td></tr>{% endfor %}
@@ -336,8 +350,10 @@
                         <td>{{ ne.medico_tratante }}</td>
                         <td>{{ ne.especialidad }}</td>
                         <td class="text-nowrap">
+                            {% if request.user.is_staff %}
                             <a href="{% url 'edit_exam' 'neumologia' ne.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
                             <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'neumologia' ne.id %}" data-name="{{ ne }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}<tr><td colspan="4" class="text-center py-3 text-muted">No hay registros de neumología.</td></tr>{% endfor %}
