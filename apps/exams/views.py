@@ -1,10 +1,23 @@
 from django.shortcuts import redirect, render, get_object_or_404
+from django.http import HttpResponseForbidden
 from apps.exams.forms import MonitoreoForm, PsicologiaForm, NutricionForm, BasalForm, TitulacionForm, NeumologiaForm, EquipoMedicoForm, SeguimientoAdaptacionForm
 from .models import Monitoreo, Psicologia, Nutricion, Neumologia, PolisomnografiaBasal, PolisomnografiaTitulacion, EquipoMedico, Neumologia, SeguimientoAdaptacion
 from apps.patients.models import Patient, Ingreso
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
+
+# Mapping: model_name -> (Model, Form, title, icon)
+EXAM_CONFIG = {
+    'monitoreo': (Monitoreo, MonitoreoForm, 'Monitoreo Respiratorio', 'fa-solid fa-lungs'),
+    'psicologia': (Psicologia, PsicologiaForm, 'Sesión de Psicología', 'fa-solid fa-brain'),
+    'nutricion': (Nutricion, NutricionForm, 'Sesión de Nutrición', 'fa-solid fa-apple-whole'),
+    'neumologia': (Neumologia, NeumologiaForm, 'Sesión de Neumología', 'fa-solid fa-user-doctor'),
+    'basal': (PolisomnografiaBasal, BasalForm, 'Polisomnografía Basal', 'fa-solid fa-bed-pulse'),
+    'titulacion': (PolisomnografiaTitulacion, TitulacionForm, 'Polisomnografía Titulación', 'fa-solid fa-bed-pulse'),
+    'equipo_medico': (EquipoMedico, EquipoMedicoForm, 'Equipo Médico', 'fa-solid fa-kit-medical'),
+    'seguimiento_adaptacion': (SeguimientoAdaptacion, SeguimientoAdaptacionForm, 'Nota de Seguimiento', 'fa-solid fa-phone-volume'),
+}
 
 # Create your views here.
 
@@ -298,4 +311,54 @@ def register_equipo_medico(request, patient_id):
     return render(request, 'exams/register_equipo_medico.html', {
         'patient': patient, 
         'form': form})
+
+
+@login_required
+def edit_exam(request, model_name, exam_id):
+    if model_name not in EXAM_CONFIG:
+        messages.error(request, "Tipo de examen no válido.")
+        return redirect('patients_list')
+
+    model_class, form_class, exam_title, exam_icon = EXAM_CONFIG[model_name]
+    exam = get_object_or_404(model_class, id=exam_id)
+    patient = exam.ingreso.paciente
+
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=exam)
+        if form.is_valid():
+            form.save()
+            messages.success(request, mark_safe(
+                f'<i class="fa-solid fa-circle-check"></i> {exam_title} actualizado para {patient.nombre} exitosamente'
+            ))
+            return redirect('patient_clinical', patient_id=patient.id)
+    else:
+        form = form_class(instance=exam)
+
+    return render(request, 'exams/edit_exam.html', {
+        'form': form,
+        'patient': patient,
+        'exam': exam,
+        'model_name': model_name,
+        'exam_title': exam_title,
+        'exam_icon': exam_icon,
+    })
+
+
+@login_required
+def delete_exam(request, model_name, exam_id):
+    if model_name not in EXAM_CONFIG:
+        messages.error(request, "Tipo de examen no válido.")
+        return redirect('patients_list')
+
+    model_class, _, exam_title, _ = EXAM_CONFIG[model_name]
+    exam = get_object_or_404(model_class, id=exam_id)
+    patient = exam.ingreso.paciente
+
+    if request.method == 'POST':
+        exam.delete()
+        messages.success(request, mark_safe(
+            f'<i class="fa-solid fa-circle-check"></i> {exam_title} eliminado para {patient.nombre} exitosamente'
+        ))
+
+    return redirect('patient_clinical', patient_id=patient.id)
 
