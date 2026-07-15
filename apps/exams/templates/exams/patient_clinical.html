@@ -6,6 +6,7 @@
 {% block style_extra %}<link rel="stylesheet" href="{% static 'css/patients.css' %}">{% endblock style_extra %}
 
 {% block content %}
+{% csrf_token %}
 <div class="container mt-4">
 
     <div class="card border-0 shadow-sm mb-4">
@@ -112,11 +113,22 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-bed-pulse me-2 text-primary"></i>Polisomnografía Basal</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>IAH</th><th>Severidad Apnea</th><th>IDO</th><th>Eficiencia</th><th>Registrado Por</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>IAH</th><th>Severidad Apnea</th><th>IDO</th><th>Eficiencia</th><th>Registrado Por</th><th>Acciones</th></tr></thead>
                 <tbody>
                     {% for basal in basales %}
-                    <tr><td>{{ basal.fecha_basal|date:"d/m/Y" }}</td><td>{{ basal.iah }}</td><td>{{ basal.severidad_apnea }}</td><td>{{ basal.ido }}</td><td>{{ basal.eficiencia }}</td><td>{{ basal.registrado_por }}</td></tr>
-                    {% empty %}<tr><td colspan="6" class="text-center py-3 text-muted">No hay registros de PSG Basal.</td></tr>{% endfor %}
+                    <tr>
+                        <td>{{ basal.fecha_basal|date:"d/m/Y" }}</td>
+                        <td>{{ basal.iah }}</td>
+                        <td>{{ basal.severidad_apnea }}</td>
+                        <td>{{ basal.ido }}</td>
+                        <td>{{ basal.eficiencia }}</td>
+                        <td>{{ basal.registrado_por }}</td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'edit_exam' 'basal' basal.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'basal' basal.id %}" data-name="{{ basal }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    {% empty %}<tr><td colspan="7" class="text-center py-3 text-muted">No hay registros de PSG Basal.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>
@@ -126,11 +138,24 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-bed-pulse me-2 text-primary"></i>Polisomnografía Titulación</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>Tipo</th><th>Presión IPAP</th><th>Presión EPAP</th><th>Freq. Resp</th><th>Talla Mascara</th><th>Tipo Mascara</th><th>Registrado por</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>Tipo</th><th>Presión IPAP</th><th>Presión EPAP</th><th>Freq. Resp</th><th>Talla Mascara</th><th>Tipo Mascara</th><th>Registrado por</th><th>Acciones</th></tr></thead>
                 <tbody>
                     {% for t in titulaciones %}
-                    <tr><td>{{ t.fecha_titulacion|date:"d/m/Y" }}</td><td>{{ t.tipo_titulacion }}</td><td>{{ t.presion_ipap }}</td><td>{{ t.presion_epap|default:"-" }}</td><td>{{ t.frecuencia_respiratoria|default:"-" }}</td><td>{{ t.talla_mascara }}</td><td>{{ t.tipo_mascara }}</td><td>{{ t.registrado_por }}</td></tr>
-                    {% empty %}<tr><td colspan="8" class="text-center py-3 text-muted">No hay registros de PSG Titulación.</td></tr>{% endfor %}
+                    <tr>
+                        <td>{{ t.fecha_titulacion|date:"d/m/Y" }}</td>
+                        <td>{{ t.tipo_titulacion }}</td>
+                        <td>{{ t.presion_ipap }}</td>
+                        <td>{{ t.presion_epap|default:"-" }}</td>
+                        <td>{{ t.frecuencia_respiratoria|default:"-" }}</td>
+                        <td>{{ t.talla_mascara }}</td>
+                        <td>{{ t.tipo_mascara }}</td>
+                        <td>{{ t.registrado_por }}</td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'edit_exam' 'titulacion' t.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'titulacion' t.id %}" data-name="{{ t }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    {% empty %}<tr><td colspan="9" class="text-center py-3 text-muted">No hay registros de PSG Titulación.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>
@@ -140,11 +165,24 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-kit-medical me-2 text-primary"></i>Equipo Médico Inicio</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>Tipo máscara</th><th>Referencia máscara</th><th>Talla máscara</th><th>Marca equipo</th><th>Serial</th><th>Modo</th><th>Registrado por</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>Tipo máscara</th><th>Referencia máscara</th><th>Talla máscara</th><th>Marca equipo</th><th>Serial</th><th>Modo</th><th>Registrado por</th><th>Acciones</th></tr></thead>
                 <tbody>
                     {% for equipo in equipos_medicos %}
-                    <tr><td>{{ equipo.created_at|date:"d/m/Y" }}</td><td>{{ equipo.tipo_mascara_eq_medico }}</td><td>{{ equipo.referencia_mascara }}</td><td>{{ equipo.talla_mascara }}</td><td>{{ equipo.marca_equipo }}</td><td>{{ equipo.serial_equipo }}</td><td>{{ equipo.modo_ventilatorio }}</td><td>{{ equipo.registrado_por }}</td></tr>
-                    {% empty %}<tr><td colspan="8" class="text-center py-3 text-muted">No hay registros de equipo médico.</td></tr>{% endfor %}
+                    <tr>
+                        <td>{{ equipo.created_at|date:"d/m/Y" }}</td>
+                        <td>{{ equipo.tipo_mascara_eq_medico }}</td>
+                        <td>{{ equipo.referencia_mascara }}</td>
+                        <td>{{ equipo.talla_mascara }}</td>
+                        <td>{{ equipo.marca_equipo }}</td>
+                        <td>{{ equipo.serial_equipo }}</td>
+                        <td>{{ equipo.modo_ventilatorio }}</td>
+                        <td>{{ equipo.registrado_por }}</td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'edit_exam' 'equipo_medico' equipo.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'equipo_medico' equipo.id %}" data-name="{{ equipo }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    {% empty %}<tr><td colspan="9" class="text-center py-3 text-muted">No hay registros de equipo médico.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>
@@ -155,10 +193,10 @@
     <div class="card shadow-sm mb-5">
         <div class="card-header text-dark fw-bold"><i class="fa-solid fa-lungs me-2 text-primary"></i>Adaptación</div>
         <div class="table-responsive">
-            <table class="table table-hover mb-0 small" style="min-width: 1000px;">
+            <table class="table table-hover mb-0 small" style="min-width: 1100px;">
                 <thead class="table-light">
                     <tr>
-                        <th>Fecha</th><th>% Uso diario</th><th>% días > 4h</th><th>% Horas uso diario</th><th>IAH basal</th><th>IAH residual</th><th>% Corrección</th><th>IPAP</th><th>EPAP</th><th>Freq. Resp.</th><th>Modo</th><th>Máscara</th><th>Tamaño</th><th>EtCO₂</th><th>Registrado</th>
+                        <th>Fecha</th><th>% Uso diario</th><th>% días > 4h</th><th>% Horas uso diario</th><th>IAH basal</th><th>IAH residual</th><th>% Corrección</th><th>IPAP</th><th>EPAP</th><th>Freq. Resp.</th><th>Modo</th><th>Máscara</th><th>Tamaño</th><th>EtCO₂</th><th>Registrado</th><th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -178,8 +216,12 @@
                         <td>{{ monitoreo.frecuencia_respiratoria|default:"-" }}</td><td>{{ monitoreo.get_modo_ventilatorio_display }}</td>
                         <td>{{ monitoreo.get_mascara_cpap_display }}</td><td>{{ monitoreo.tamano_mascara }}</td><td>{{ monitoreo.etco2_promedio|default:"-" }}</td>
                         <td>{{ monitoreo.registrado_por }}</td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'edit_exam' 'monitoreo' monitoreo.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'monitoreo' monitoreo.id %}" data-name="{{ monitoreo }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </td>
                     </tr>
-                    {% empty %}<tr><td colspan="15" class="text-center py-4 text-muted">No hay registros de monitoreo.</td></tr>{% endfor %}
+                    {% empty %}<tr><td colspan="16" class="text-center py-4 text-muted">No hay registros de monitoreo.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>
@@ -199,6 +241,7 @@
                         <th style="width: 150px;">Fecha</th>
                         <th>Observaciones / Detalle del Contacto</th>
                         <th style="width: 200px;">Registrado por</th>
+                        <th style="width: 120px;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -213,10 +256,14 @@
                         <td>
                             {{ nota.registrado_por.username }}
                         </td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'edit_exam' 'seguimiento_adaptacion' nota.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'seguimiento_adaptacion' nota.id %}" data-name="{{ nota }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="text-center py-4 text-muted fst-italic">
+                        <td colspan="4" class="text-center py-4 text-muted fst-italic">
                             No hay notas de contacto registradas para este ingreso.
                         </td>
                     </tr>
@@ -230,11 +277,23 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-brain me-2 text-info"></i>Psicología</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>Depresión Beck</th><th>Ansiedad Beck</th><th>Calidad</th><th>Cantidad</th><th>Total</th><th>Registrado por</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>Depresión Beck</th><th>Ansiedad Beck</th><th>Calidad</th><th>Cantidad</th><th>Total</th><th>Registrado por</th><th>Acciones</th></tr></thead>
                 <tbody>
                     {% for s in sesiones_psicologia %}
-                    <tr><td>{{ s.created_at|date:"d/m/Y" }}</td><td>{{ s.inventario_depre_beck }}</td><td>{{ s.inventario_ansiedad_beck }}</td><td>{{ s.calidad }}</td><td>{{ s.cantidad }}</td><td>{{ s.total }}</td><td>{{ s.registrado_por }}</td></tr>
-                    {% empty %}<tr><td colspan="7" class="text-center py-3 text-muted">No hay registros de psicología.</td></tr>{% endfor %}
+                    <tr>
+                        <td>{{ s.created_at|date:"d/m/Y" }}</td>
+                        <td>{{ s.inventario_depre_beck }}</td>
+                        <td>{{ s.inventario_ansiedad_beck }}</td>
+                        <td>{{ s.calidad }}</td>
+                        <td>{{ s.cantidad }}</td>
+                        <td>{{ s.total }}</td>
+                        <td>{{ s.registrado_por }}</td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'edit_exam' 'psicologia' s.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'psicologia' s.id %}" data-name="{{ s }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    {% empty %}<tr><td colspan="8" class="text-center py-3 text-muted">No hay registros de psicología.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>
@@ -244,11 +303,22 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-apple-whole me-2 text-success"></i>Nutrición</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>Estado nutricional</th><th>Carbohidratos %</th><th>Rumiación</th><th>Cafeína</th><th>Registrado por</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>Estado nutricional</th><th>Carbohidratos %</th><th>Rumiación</th><th>Cafeína</th><th>Registrado por</th><th>Acciones</th></tr></thead>
                 <tbody>
                     {% for s in sesiones_nutricion %}
-                    <tr><td>{{ s.created_at|date:"d/m/Y" }}</td><td>{{ s.get_estado_nutricional_display }}</td><td>{{ s.carbohidratos_pct }}</td><td>{{ s.get_rumiacion_display }}</td><td>{{ s.cafeina }}</td><td>{{ s.registrado_por }}</td></tr>
-                    {% empty %}<tr><td colspan="6" class="text-center py-3 text-muted">No hay registros de nutrición.</td></tr>{% endfor %}
+                    <tr>
+                        <td>{{ s.created_at|date:"d/m/Y" }}</td>
+                        <td>{{ s.get_estado_nutricional_display }}</td>
+                        <td>{{ s.carbohidratos_pct }}</td>
+                        <td>{{ s.get_rumiacion_display }}</td>
+                        <td>{{ s.cafeina }}</td>
+                        <td>{{ s.registrado_por }}</td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'edit_exam' 'nutricion' s.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'nutricion' s.id %}" data-name="{{ s }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    {% empty %}<tr><td colspan="7" class="text-center py-3 text-muted">No hay registros de nutrición.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>
@@ -258,11 +328,19 @@
         <div class="card-header bg-light fw-bold"><i class="fa-solid fa-user-doctor me-2 text-danger"></i>Neumología</div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 small">
-                <thead class="table-light"><tr><th>Fecha</th><th>Médico Tratante</th><th>Especialidad</th></tr></thead>
+                <thead class="table-light"><tr><th>Fecha</th><th>Médico Tratante</th><th>Especialidad</th><th>Acciones</th></tr></thead>
                 <tbody>
                     {% for ne in sesiones_neumologia %}
-                    <tr><td>{{ ne.fecha_consulta|date:"d/m/Y" }}</td><td>{{ ne.medico_tratante }}</td><td>{{ ne.especialidad }}</td></tr>
-                    {% empty %}<tr><td colspan="3" class="text-center py-3 text-muted">No hay registros de neumología.</td></tr>{% endfor %}
+                    <tr>
+                        <td>{{ ne.fecha_consulta|date:"d/m/Y" }}</td>
+                        <td>{{ ne.medico_tratante }}</td>
+                        <td>{{ ne.especialidad }}</td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'edit_exam' 'neumologia' ne.id %}" class="btn btn-outline-warning btn-sm" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <button class="btn btn-outline-danger btn-sm btn-delete" data-url="{% url 'delete_exam' 'neumologia' ne.id %}" data-name="{{ ne }}" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    {% empty %}<tr><td colspan="4" class="text-center py-3 text-muted">No hay registros de neumología.</td></tr>{% endfor %}
                 </tbody>
             </table>
         </div>
@@ -273,4 +351,38 @@
 
 {% block script_extra %}
     <script src="{% static 'js/alerts.js' %}"></script>
+    <script>
+        document.querySelectorAll('.btn-delete').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var url = this.getAttribute('data-url');
+                var name = this.getAttribute('data-name');
+                Swal.fire({
+                    title: '¿Eliminar registro?',
+                    text: 'Se eliminará: ' + name,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        var form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = url;
+                        var csrf = document.querySelector('[name=csrfmiddlewaretoken]');
+                        if (csrf) {
+                            var input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'csrfmiddlewaretoken';
+                            input.value = csrf.value;
+                            form.appendChild(input);
+                        }
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock script_extra %}
